@@ -11,10 +11,17 @@
 4. ✅ **Response time**: <1 second (was timing out at 30+ seconds)
 
 ### Test Results:
-- ✅ "Tandoori chicken from Indian restaurant" → Works perfectly
+- ✅ "Chicken Tikka Masala from Indian restaurant" → Works perfectly (dish in menu)
 - ✅ "Something spicy under $15" → Now filters correctly
 - ✅ "I am hungry get me something in 20 minutes" → Finds restaurants (with buffer)
 - ✅ "Italian food under $20" → Works with menu item filtering
+
+**Note:** Use dishes that exist in our menus:
+- Indian: Chicken Tikka Masala, Chicken Tikka, Paneer Butter Masala, Chicken Biryani
+- Italian: Pizza, Pasta, Lasagna
+- Japanese: Sushi, Ramen, Teriyaki
+- Mexican: Tacos, Burrito, Enchilada
+- Thai: Pad Thai, Tom Yum
 
 ---
 
@@ -32,9 +39,9 @@ The intelligent search endpoint is now live and ready to test!
 ### Using curl (GET with Query Parameters)
 
 ```bash
-# Example 1: Specific Dish Query
+# Example 1: Specific Dish Query (Chicken Tikka Masala exists in menu)
 curl -G "https://ai-food-ordering-poc.vercel.app/api/v1/search/intelligent" \
-  --data-urlencode "query=I would like to try Tandoori Chicken from an Indian restaurant" \
+  --data-urlencode "query=I want Chicken Tikka Masala from an Indian restaurant" \
   --data-urlencode "location=San Francisco"
 
 # Example 2: Urgency + Preference
@@ -79,22 +86,23 @@ print(response.json())
 **Input:**
 ```json
 {
-  "query": "I would like to try Tandoori Chicken from an Indian restaurant",
+  "query": "I want Chicken Tikka Masala from an Indian restaurant",
   "location": "San Francisco"
 }
 ```
 
 **Expected Output:**
-- `parsed_query.dish`: "Tandoori Chicken"
+- `parsed_query.dish`: "Chicken Tikka Masala"
 - `parsed_query.cuisine`: ["Indian"]
-- `restaurants`: List of Indian restaurants
-- `suggested_items`: Items named "Tandoori Chicken"
-- `message`: "Found X restaurants with Tandoori Chicken"
+- `restaurants`: List of Indian restaurants (Taj Palace)
+- `suggested_items`: Chicken Tikka Masala ($16.99, spicy)
+- `message`: "Found X restaurants with Chicken Tikka Masala"
 
 **Success Criteria:**
 - ✓ Extracts dish name correctly
 - ✓ Filters by Indian cuisine
 - ✓ Returns restaurants with the dish
+- ✓ Shows suggested menu item
 - ✓ Provides helpful message
 
 ---
@@ -420,10 +428,10 @@ Try these queries in order:
 
 **Test 1: Specific Dish**
 ```
-I would like to try Tandoori Chicken from an Indian restaurant in San Francisco
+I want Chicken Tikka Masala from an Indian restaurant in San Francisco
 ```
 
-**Expected:** GPT calls intelligentSearch, shows Indian restaurants with Tandoori Chicken
+**Expected:** GPT calls intelligentSearch, shows Taj Palace with Chicken Tikka Masala ($16.99, spicy)
 
 **Test 2: Urgency**
 ```
