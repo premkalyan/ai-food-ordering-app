@@ -11,12 +11,22 @@ interface MenuViewProps {
 export function MenuView({ restaurant, onBack, onAddToCart, cart }: MenuViewProps) {
   const [menu, setMenu] = useState<MenuCategory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    api.getMenu(restaurant.id).then((data) => {
-      setMenu(data.categories);
-      setLoading(false);
-    });
+    setLoading(true);
+    setError(null);
+    api.getMenu(restaurant.id)
+      .then((data) => {
+        console.log('Menu data received:', data);
+        setMenu(data.categories || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error loading menu:', err);
+        setError('Failed to load menu. Please try again.');
+        setLoading(false);
+      });
   }, [restaurant.id]);
 
   const getItemQuantity = (itemId: string) => {
@@ -28,6 +38,26 @@ export function MenuView({ restaurant, onBack, onAddToCart, cart }: MenuViewProp
     return (
       <div className="flex justify-center items-center p-8">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-6xl mx-auto p-6">
+        <button
+          onClick={onBack}
+          className="mb-6 flex items-center text-gray-600 hover:text-gray-900"
+        >
+          <span className="mr-2">←</span>
+          Back to restaurants
+        </button>
+        <div className="card bg-red-50 border border-red-200 text-center p-8">
+          <p className="text-red-600 text-lg mb-4">{error}</p>
+          <button onClick={() => window.location.reload()} className="btn btn-primary">
+            Retry
+          </button>
+        </div>
       </div>
     );
   }
@@ -58,8 +88,13 @@ export function MenuView({ restaurant, onBack, onAddToCart, cart }: MenuViewProp
       </div>
 
       {/* Menu Categories */}
-      <div className="space-y-8">
-        {menu.map((category) => (
+      {menu.length === 0 ? (
+        <div className="card text-center p-8">
+          <p className="text-gray-600 text-lg">No menu items available.</p>
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {menu.map((category) => (
           <div key={category.name}>
             <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
               <span className="mr-2">🍽️</span>
@@ -125,7 +160,8 @@ export function MenuView({ restaurant, onBack, onAddToCart, cart }: MenuViewProp
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

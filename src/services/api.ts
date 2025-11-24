@@ -76,7 +76,12 @@ export const api = {
   // Get restaurant menu
   async getMenu(restaurantId: string): Promise<{ categories: MenuCategory[] }> {
     const response = await fetch(`${API_BASE_URL}/restaurants/${restaurantId}/menu`);
-    return response.json();
+    if (!response.ok) {
+      throw new Error(`Failed to fetch menu: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('API response for menu:', data);
+    return data;
   },
 
   // Create order
