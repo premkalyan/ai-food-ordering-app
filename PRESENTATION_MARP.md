@@ -5,7 +5,7 @@ paginate: true
 backgroundColor: #fff
 style: |
   :root {
-    --base-font-size: 22px;
+    --base-font-size: 18px;
     --title-size: calc(var(--base-font-size) * 1.8);
     --subtitle-size: calc(var(--base-font-size) * 1.3);
     --body-size: var(--base-font-size);
@@ -197,58 +197,50 @@ Order food naturally through ChatGPT - no app switching, no forms
 ---
 
 
-## Global Deployment Strategy
+## Deployment & Growth Strategy
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2em;">
+
+<div>
 
 ### Phase 1: GPT Store (Now)
-
-**Publish Custom GPT to OpenAI's marketplace**
-
 - Reach: 200M+ ChatGPT users
 - Discoverable in search
 - Free to publish
-- Requires ChatGPT Plus for users
+- ChatGPT Plus required
 
-### Phase 2: MCP Public Registry (Q2-Q3 2025)
-
-**Submit MCP connector when public access launches**
-
+### Phase 2: MCP Registry (Q2-Q3 2025)
 - Automatic discovery
 - One-click enable
-- Works in default ChatGPT
+- Default ChatGPT integration
 
-<div class="status-live">Already built and deployed - first-mover advantage</div>
+</div>
 
----
+<div>
 
-## Path to Default Integration
+### Path to Default Integration
 
-### Option A: Featured GPT Status
-
-**OpenAI features top GPTs for specific intents**
-
-Requirements:
-- 10K+ users
-- 4.7+ rating
-- High engagement
+**Featured GPT (6-12 months)**
+- 10K+ users, 4.7+ rating
 - OpenAI approval
 
-Timeline: 6-12 months
-
-### Option B: OpenAI Partnership
-
-**Direct integration as default capability**
-
-Requirements:
-- 50K+ monthly users
-- $10K+ monthly revenue
+**Partnership (12+ months)**
+- 50K+ users, $10K+ revenue
 - Strategic value
-- Professional operation
 
-Timeline: 12+ months
+<div class="status-live">Already built - first-mover advantage</div>
+
+</div>
+
+</div>
 
 ---
 
 ## 12-Month Roadmap
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2em;">
+
+<div>
 
 ### Month 1-3: Launch
 - Publish to GPT Store
@@ -260,6 +252,10 @@ Timeline: 12+ months
 - Add 5 cities, 50 restaurants
 - Begin monetization
 
+</div>
+
+<div>
+
 ### Month 7-9: Scale
 - 10,000 users, $5K revenue
 - Restaurant partnerships
@@ -270,260 +266,195 @@ Timeline: 12+ months
 - MCP public registry
 - OpenAI partnership talks
 
----
+</div>
 
-## Success Metrics
-
-### User Metrics
-- **MAU:** Monthly Active Users
-- **Engagement:** Orders per user
-- **Retention:** Day 7, Day 30
-
-### Business Metrics
-- **MRR:** Monthly Recurring Revenue
-- **AOV:** Average Order Value
-- **Commission:** Per order
-
-### Quality Metrics
-- **Rating:** 4.7+ target
-- **NPS:** Net Promoter Score
-- **Uptime:** 99.9% target
-
-<div class="highlight">Goal: 50K users, $50K MRR, 4.8+ rating by Month 12</div>
+</div>
 
 ---
 
-## GPT Store Publishing
+## Success Metrics & Next Steps
 
-### Prerequisites
-- ChatGPT Plus account
-- Custom GPT built and tested
-- Clear name and description
-- Profile image
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2em;">
 
-### Process
-1. **Optimize:** Name, description, conversation starters
-2. **Configure:** Set access to "Everyone"
-3. **Test:** End-to-end user flows
-4. **Publish:** Submit to GPT Store
-5. **Wait:** 1-3 days for approval
-6. **Launch:** Share and market
+<div>
 
-<div class="small">Categories: Lifestyle, Productivity</div>
+### Key Metrics
+**User:** MAU, Engagement, Retention
+**Business:** MRR, AOV, Commission
+**Quality:** 4.7+ rating, NPS, 99.9% uptime
 
----
+<div class="highlight">Goal: 50K users, $50K MRR by Month 12</div>
 
-## Immediate Next Steps
+### GPT Store Publishing
+1. Optimize name and description
+2. Set access to "Everyone"
+3. Test end-to-end flows
+4. Submit to GPT Store
+5. Wait 1-3 days for approval
+6. Launch and market
 
-### This Week
+</div>
+
+<div>
+
+### Immediate Actions
+
+**This Week**
 - Review GPT description
 - Create profile image
 - Test end-to-end
 - Publish to GPT Store
-- Wait for Developer Mode access
 
-### Month 1
+**Month 1**
 - GPT Store approval
 - Create demo video
 - Social media launch
 - Reach 100 users
-- Deploy MCP (when access granted)
+- Deploy MCP
+
+</div>
+
+</div>
 
 ---
 
-## Monetization Strategy
+## Business Model & Advantages
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2em;">
+
+<div>
 
 ### Revenue Streams
 
-**Commission Model** (Primary)
-- 10-15% commission per order
-- Restaurant partnerships
+**Commission (Primary)**
+- 10-15% per order
 - Volume-based tiers
 
-**Subscription Model** (Secondary)
-- Free: Basic features
-- Premium ($9.99/mo): Priority support, exclusive deals
-- Business ($29.99/mo): Analytics, bulk ordering
+**Restaurant Subscriptions**
+- Basic: $49/mo
+- Pro: $149/mo
+- Enterprise: $499/mo
 
 **Target:** $50K MRR by Month 12
 
----
+</div>
 
-## Competitive Advantages
+<div>
 
-### Why We'll Win
+### Competitive Advantages
 
 1. **First-mover** in ChatGPT food ordering
 2. **Native integration** - no app switching
-3. **Conversational UX** - most intuitive
-4. **Already built** - ready to scale
-5. **Future-proof** - MCP ready
+3. **Already deployed** - ready to scale
+4. **Future-proof** - MCP ready
 
 ### Market Opportunity
-
 - 200M+ ChatGPT users
-- $150B global food delivery market
+- $150B food delivery market
 - Growing AI adoption
-- Conversational commerce trend
 
-<div class="highlight">Perfect timing to capture this market</div>
+</div>
+
+</div>
 
 ---
 
 ## Risk Mitigation
 
-### Technical Risks
+### Market Risks (Primary Focus)
+- **User adoption:** Low-friction onboarding, free to start
+- **Restaurant partnerships:** Strong value proposition, commission-based
+- **OpenAI changes:** Diversified approach (3 implementations)
+
+### Business Risks
+- **Competition:** First-mover advantage, already deployed
+- **Monetization:** Multiple revenue streams (commission + subscriptions)
+- **Regulations:** Compliance framework in place
+
+### Technical Risks (Low Priority)
 - **API limits:** Caching and rate limiting
 - **Scaling:** Serverless auto-scales
 - **Downtime:** 99.9% SLA monitoring
 
-### Business Risks
-- **Competition:** First-mover advantage
-- **Monetization:** Multiple revenue streams
-- **Regulations:** Compliance framework
-
-### Market Risks
-- **User adoption:** Low-friction onboarding
-- **Restaurant partnerships:** Value proposition
-- **OpenAI changes:** Diversified approach
-
-<div class="small">Mitigation: Build fast, iterate quickly, prove traction</div>
+<div class="small">Strategy: Focus on market validation first, technical challenges are manageable</div>
 
 ---
 
-## Investment Ask (Optional)
 
-### Funding Scenario
+## Demo & Vision
 
-**Seed Round:** $500K
-- **Use:** Team (2 devs, 1 marketer), infrastructure, marketing
-- **Timeline:** 18 months runway
-- **Goal:** 100K users, $100K MRR
-- **Exit:** Series A or acquisition
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2em;">
 
-**Bootstrap Scenario**
-- Start with GPT Store (free)
-- Grow organically
-- Reinvest revenue
-- Slower but sustainable
+<div>
 
-<div class="small">Recommendation: Bootstrap to 10K users, then decide</div>
+### Live Demo
+1. Custom GPT: Conversational ordering
+2. Web App: Visual browsing
+3. Backend API: Live endpoints
 
----
-
-## Team & Roles
-
-### Current
-- **You:** Founder, product, strategy
-- **AI Assistant:** Development, documentation
-
-### Month 3-6 (If scaling)
-- **Backend Dev:** API integrations
-- **Frontend Dev:** UI/UX improvements
-- **Marketing:** Growth, partnerships
-
-### Month 6-12 (If funded)
-- **CTO:** Technical leadership
-- **Sales:** Restaurant partnerships
-- **Support:** Customer success
-
----
-
-## Demo Time
-
-### Live Demo Flow
-
-1. **Custom GPT:** Conversational ordering
-2. **Web App:** Visual browsing
-3. **MCP Server:** Health check
-4. **Backend API:** Live endpoints
-
-<div class="highlight">Let's see it in action</div>
-
----
-
-## Key Takeaways
-
-### What We Have
+### Current Status
 - Working Custom GPT
 - Interactive web app
 - MCP connector deployed
-- Complete documentation
 - Ready to publish
+
+</div>
+
+<div>
+
+### The Vision
+
+**"Order food as naturally as asking for information"**
+
+No apps. No forms. Just conversation.
 
 ### What's Next
 - Publish to GPT Store (this week)
 - Market to early adopters
-- Deploy MCP (when access granted)
 - Grow to 10K users (6 months)
 - OpenAI partnership (12 months)
 
-<div class="status-live">We're ready to launch</div>
-
----
-
-## The Vision
-
-<div style="text-align: center; padding: 2em;">
-
-# "Order food as naturally as asking for information"
-
-**No apps. No forms. Just conversation.**
-
-<div class="highlight" style="font-size: var(--subtitle-size); margin-top: 1em;">
-In 12 months, food ordering in ChatGPT should be as common as asking for weather
 </div>
 
 </div>
 
 ---
 
-## Technical Stack
+## Questions & Resources
 
-### Frontend
-- React 18.3 with TypeScript
-- Vite build tool
-- Tailwind CSS 3.4
-- Vercel hosting
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2em;">
 
-### Backend
-- FastAPI (Python)
-- 16 restaurants across 5 cities
-- Vercel serverless functions
+<div>
 
-### MCP Server
-- Node.js 20+
-- MCP SDK 1.22
-- Vercel serverless
+### Technical Stack
+**Frontend:** React 18.3, TypeScript, Vite, Tailwind CSS
+**Backend:** FastAPI (Python), Vercel serverless
+**MCP:** Node.js 20+, MCP SDK 1.22
 
-<div class="tiny">
-
-**Production URLs:**
-Web: `ai-food-ordering-app-ten.vercel.app`
-API: `ai-food-ordering-poc.vercel.app`
-MCP: `ai-food-ordering-app-ten.vercel.app/api/mcp`
+### Production URLs
+- Web: `ai-food-ordering-app-ten.vercel.app`
+- API: `ai-food-ordering-poc.vercel.app`
+- MCP: `ai-food-ordering-app-ten.vercel.app/api/mcp`
 
 </div>
 
----
+<div>
 
-## Questions?
-
-### Contact & Resources
-
-**Documentation:**
+### Documentation
 - MCP Setup Guide
 - Deployment Strategy
 - GPT Instructions
 
-**URLs:**
-- Web: `ai-food-ordering-app-ten.vercel.app`
-- API: `ai-food-ordering-poc.vercel.app`
-- GitHub: `github.com/premkalyan/ai-food-ordering-app`
+### GitHub
+`github.com/premkalyan/ai-food-ordering-app`
 
-**OpenAI:**
+### OpenAI
 - Partnerships: `partnerships@openai.com`
 - GPT Store: `help.openai.com`
+
+</div>
+
+</div>
 
 ---
 
