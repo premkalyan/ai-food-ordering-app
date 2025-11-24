@@ -103,51 +103,325 @@ Enable:
 
 If you want the GPT to call the API directly:
 
+#### Option A: Import Schema (Easiest)
 1. Click "Create new action"
-2. Import schema from: https://ai-food-ordering-poc.vercel.app/docs
-3. Or paste this OpenAPI schema:
+2. Click "Import from URL"
+3. Enter: `https://ai-food-ordering-poc.vercel.app/openapi.json`
+4. Click "Import"
+5. Done! All endpoints will be imported automatically ✅
+
+#### Option B: Manual Schema (Complete)
+Or paste this complete OpenAPI schema:
 
 ```yaml
-openapi: 3.0.0
+openapi: 3.1.0
 info:
   title: AI Food Ordering API
+  description: Restaurant ordering platform with menu browsing and order management
   version: 1.0.0
 servers:
-  - url: https://ai-food-ordering-poc.vercel.app/api/v1
+  - url: https://ai-food-ordering-poc.vercel.app
+    description: Production server
+
 paths:
-  /cities:
+  /api/v1/cities:
     get:
       summary: Get available cities
+      description: Returns list of all cities where restaurants are available
       operationId: getCities
       responses:
         '200':
-          description: List of cities
-  /cuisines:
+          description: List of cities with prompt
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cities:
+                    type: array
+                    items:
+                      type: string
+                  prompt:
+                    type: string
+
+  /api/v1/cuisines:
     get:
       summary: Get available cuisines
+      description: Returns list of all available cuisine types
       operationId: getCuisines
       responses:
         '200':
-          description: List of cuisines
-  /restaurants/search:
+          description: List of cuisines with prompt
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cuisines:
+                    type: array
+                    items:
+                      type: string
+                  prompt:
+                    type: string
+
+  /api/v1/restaurants/search:
     get:
       summary: Search restaurants
+      description: Search for restaurants by city and/or cuisine
       operationId: searchRestaurants
       parameters:
         - name: city
           in: query
+          required: false
           schema:
             type: string
+          description: Filter by city (e.g., Bangalore, San Francisco)
         - name: cuisine
           in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by cuisine (e.g., Indian, Chinese, Italian)
+      responses:
+        '200':
+          description: List of restaurants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    cuisine:
+                      type: string
+                    rating:
+                      type: number
+                    price_range:
+                      type: string
+                    delivery_time:
+                      type: string
+                    minimum_order:
+                      type: number
+                    delivery_fee:
+                      type: number
+
+  /api/v1/restaurants/{restaurant_id}/menu:
+    get:
+      summary: Get restaurant menu
+      description: Returns complete menu with categories and items for a specific restaurant
+      operationId: getRestaurantMenu
+      parameters:
+        - name: restaurant_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Restaurant ID (e.g., rest_009)
+      responses:
+        '200':
+          description: Restaurant menu with categories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categories:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        items:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                              name:
+                                type: string
+                              description:
+                                type: string
+                              price:
+                                type: number
+                              vegetarian:
+                                type: boolean
+                              spicy:
+                                type: boolean
+                              popular:
+                                type: boolean
+
+  /api/v1/orders/create:
+    post:
+      summary: Create order
+      description: Create a new food order
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - restaurant_id
+                - items
+                - delivery_address
+              properties:
+                restaurant_id:
+                  type: string
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      item_id:
+                        type: string
+                      name:
+                        type: string
+                      price:
+                        type: number
+                      quantity:
+                        type: integer
+                delivery_address:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    city:
+                      type: string
+                    state:
+                      type: string
+                    zip:
+                      type: string
+      responses:
+        '200':
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  status:
+                    type: string
+                  total:
+                    type: number
+                  estimated_delivery:
+                    type: string
+
+  /api/v1/orders/{order_id}/payment:
+    post:
+      summary: Process payment
+      description: Process payment for an order
+      operationId: processPayment
+      parameters:
+        - name: order_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_method:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    last_four:
+                      type: string
+      responses:
+        '200':
+          description: Payment processed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  transaction_id:
+                    type: string
+
+  /api/v1/orders/{order_id}/track:
+    get:
+      summary: Track order
+      description: Get current status and tracking info for an order
+      operationId: trackOrder
+      parameters:
+        - name: order_id
+          in: path
+          required: true
           schema:
             type: string
       responses:
         '200':
-          description: List of restaurants
+          description: Order tracking information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  status:
+                    type: string
+                  estimated_delivery:
+                    type: string
+
+  /api/v1/favorites/restaurants:
+    get:
+      summary: Get favorite restaurants
+      description: Get user's favorite restaurants
+      operationId: getFavoriteRestaurants
+      responses:
+        '200':
+          description: List of favorite restaurants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+  /api/v1/favorites/restaurants/{restaurant_id}:
+    post:
+      summary: Add restaurant to favorites
+      description: Add a restaurant to user's favorites
+      operationId: addFavoriteRestaurant
+      parameters:
+        - name: restaurant_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Restaurant added to favorites
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
 ```
 
-**Note**: For the visual app, you don't need Actions. Just guide users to the web interface!
+**Note**: For the visual app approach, you don't need Actions. Just guide users to the web interface at https://ai-food-ordering-app-ten.vercel.app
+
+**Recommendation**: Use **Option A (Import from URL)** - it's easier and automatically stays updated!
 
 ---
 
