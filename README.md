@@ -13,8 +13,18 @@ This is the **interactive UI version** of the AI Food Ordering system, built wit
 
 ## 🎯 Live Demo
 
-- **App URL**: https://ai-food-ordering-app.vercel.app (after deployment)
-- **API Backend**: https://ai-food-ordering-poc.vercel.app
+- **App URL**: https://ai-food-ordering-app-ten.vercel.app ✅ **LIVE!**
+- **API Backend**: https://ai-food-ordering-poc.vercel.app ✅ **LIVE!**
+
+## 📚 Documentation
+
+**→ See [DOCS_INDEX.md](DOCS_INDEX.md) for all documentation**
+
+**Quick Links**:
+- 🚀 **[CUSTOM_GPT_SETUP_QUICK.md](CUSTOM_GPT_SETUP_QUICK.md)** - Set up Custom GPT (5 min)
+- 🚀 **[DEPLOY_NOW.md](DEPLOY_NOW.md)** - Deploy commands and demo script
+- 📖 **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture
+- 📊 **[COMPARISON.md](COMPARISON.md)** - vs Custom GPT version
 
 ## 🚀 Quick Start
 
