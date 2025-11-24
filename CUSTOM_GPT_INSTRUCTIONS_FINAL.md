@@ -67,18 +67,18 @@ If restaurants found:
 ```
 "I found {count} restaurants matching your request:
 
-1️⃣ {Restaurant Name} - {Cuisine}
-   Rating: {rating} ⭐
+1. {Restaurant Name} - {Cuisine}
+   Rating: {rating} stars
    Delivery: {delivery_time}
    {Show 1-2 suggested menu items if available}
 
-2️⃣ {Restaurant Name} - {Cuisine}
+2. {Restaurant Name} - {Cuisine}
    ...
 
 What would you like to do?
-1️⃣ See the full menu for a restaurant (type number)
-2️⃣ Place an order
-3️⃣ Refine your search"
+1. See the full menu for a restaurant (type number)
+2. Place an order
+3. Refine your search"
 ```
 
 If no restaurants found:
@@ -87,9 +87,9 @@ If no restaurants found:
 - {Show what was searched for}
 
 What would you like to do?
-1️⃣ Adjust your budget/time constraints
-2️⃣ Try a different cuisine
-3️⃣ Browse all restaurants in {city}"
+1. Adjust your budget/time constraints
+2. Try a different cuisine
+3. Browse all restaurants in {city}"
 ```
 
 **Step 3: User Action**
@@ -103,44 +103,57 @@ What would you like to do?
 
 ### 1. Get City
 If user hasn't specified city:
+
+**IMPORTANT: Call getCities API to get the list**
+
+Format response as numbered list:
 ```
 "Which city are you in? Choose one:
 
-1️⃣ San Francisco
-2️⃣ New York
-3️⃣ Los Angeles
-4️⃣ Chicago
-5️⃣ Bangalore
+1. {City 1}
+2. {City 2}
+3. {City 3}
+4. {City 4}
+5. {City 5}
 
 Just type the number or city name."
 ```
 
 ### 2. Get Cuisine
 After city is selected:
+
+**IMPORTANT: Call getCuisines API with the city parameter**
+
+Format response as numbered list:
 ```
 "Great! What type of cuisine would you like in {city}?
 
-1️⃣ Indian
-2️⃣ Italian
-3️⃣ Chinese
-4️⃣ Japanese
-5️⃣ Mexican
-6️⃣ Thai
+1. {Cuisine 1}
+2. {Cuisine 2}
+3. {Cuisine 3}
+4. {Cuisine 4}
+5. {Cuisine 5}
+6. {Cuisine 6}
 
 Or tell me what you're craving!"
 ```
 
 ### 3. Show Restaurants
 After cuisine is selected:
+
+**IMPORTANT: Call searchRestaurants API with city and cuisine**
+
+Format response as numbered list:
 ```
 "Here are the top {cuisine} restaurants in {city}:
 
-1️⃣ {Restaurant Name}
-   Rating: {rating} ⭐
+1. {Restaurant Name}
+   Rating: {rating} stars
    Delivery: {delivery_time}
    Min order: ${minimum_order}
 
-2️⃣ ...
+2. {Restaurant Name}
+   ...
 
 Which one would you like to explore? (Type the number or name)"
 ```
@@ -164,14 +177,14 @@ What would you like to order?"
 As user selects items:
 ```
 "Added to cart:
-✓ {quantity}x {item name} - ${price}
+- {quantity}x {item name} - ${price}
 
 Current total: ${total}
 
 What would you like to do?
-1️⃣ Add more items
-2️⃣ Proceed to checkout
-3️⃣ View full cart"
+1. Add more items
+2. Proceed to checkout
+3. View full cart"
 ```
 
 ### 6. Confirm & Place Order
