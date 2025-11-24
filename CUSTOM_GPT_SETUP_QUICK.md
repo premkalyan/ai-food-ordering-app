@@ -103,12 +103,14 @@ Enable:
 
 If you want the GPT to call the API directly:
 
-#### Option A: Import Schema (Easiest)
+#### Option A: Import Schema (Easiest) ⭐ **RECOMMENDED**
 1. Click "Create new action"
 2. Click "Import from URL"
-3. Enter: `https://ai-food-ordering-poc.vercel.app/openapi.json`
+3. Enter: `https://ai-food-ordering-poc.vercel.app/openapi-production.json`
 4. Click "Import"
 5. Done! All endpoints will be imported automatically ✅
+
+**Note**: Use `openapi-production.json` (not `openapi.json`) - it has only production URLs, no localhost references.
 
 #### Option B: Manual Schema (Complete)
 Or paste this complete OpenAPI schema:
