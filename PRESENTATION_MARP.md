@@ -145,13 +145,15 @@ Order food naturally through ChatGPT - no app switching, no forms
 
 **User in ChatGPT** → **Custom GPT** → **API Actions** → **Backend API** → **Restaurant Data**
 
-### User Flow
+### Intelligent Query Processing
 
-1. "I want to order food" - Shows cities
-2. "Bangalore" - Shows cuisines  
-3. "Indian" - Lists restaurants
-4. "Show menu for Spice Garden" - Displays menu
-5. "Butter Chicken + Naan" - Collects address, places order
+**Complex requests handled naturally:**
+- "Tandoori Chicken from an Indian restaurant"
+- "Pick my favorite Italian restaurant, order my favorite"
+- "I'm hungry, get me something spicy in 15 minutes"
+- "Something Italian under $5, delivered in 10 minutes"
+
+**AI understands:** Cuisine, price, time, preferences, favorites
 
 <div class="status-live">LIVE: Ready to publish to GPT Store</div>
 
@@ -183,14 +185,14 @@ Order food naturally through ChatGPT - no app switching, no forms
 
 **User in ChatGPT** → **MCP Protocol** → **MCP Server** → **UI Widget** → **Renders in ChatGPT** → **Backend API**
 
-### Key Difference
+### Key Features
 
 <div class="highlight">Interactive UI renders INSIDE ChatGPT</div>
 
-- Real clickable buttons
+- Real clickable buttons with smart filtering
 - Restaurant cards with photos
-- No page switching
-- Best user experience
+- Complex query processing (price, time, cuisine, favorites)
+- No page switching, best user experience
 
 <div class="status-pending">DEPLOYED: Waiting for public MCP access</div>
 
@@ -331,9 +333,9 @@ Order food naturally through ChatGPT - no app switching, no forms
 - Volume-based tiers
 
 **Restaurant Subscriptions**
-- Basic: $49/mo
-- Pro: $149/mo
-- Enterprise: $499/mo
+- Basic: $/mo
+- Pro: $/mo
+- Enterprise: $/mo
 
 **Target:** $50K MRR by Month 12
 
@@ -344,14 +346,15 @@ Order food naturally through ChatGPT - no app switching, no forms
 ### Competitive Advantages
 
 1. **First-mover** in ChatGPT food ordering
-2. **Native integration** - no app switching
-3. **Already deployed** - ready to scale
-4. **Future-proof** - MCP ready
+2. **Intelligent queries** - understands complex requests
+3. **Native integration** - no app switching
+4. **Already deployed** - ready to scale
+5. **Future-proof** - MCP ready
 
 ### Market Opportunity
 - 200M+ ChatGPT users
 - $150B food delivery market
-- Growing AI adoption
+- AI-powered personalization
 
 </div>
 
