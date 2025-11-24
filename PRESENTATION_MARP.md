@@ -3,37 +3,59 @@ marp: true
 theme: default
 paginate: true
 backgroundColor: #fff
-backgroundImage: url('https://marp.app/assets/hero-background.svg')
 style: |
   :root {
-    --base-font-size: 28px;
+    --base-font-size: 22px;
     --title-size: calc(var(--base-font-size) * 1.8);
     --subtitle-size: calc(var(--base-font-size) * 1.3);
     --body-size: var(--base-font-size);
     --small-size: calc(var(--base-font-size) * 0.85);
     --tiny-size: calc(var(--base-font-size) * 0.7);
+    --primary-blue: #1565C0;
+    --secondary-blue: #2196F3;
+    --dark-grey: #424242;
+    --medium-grey: #757575;
+    --light-grey: #E0E0E0;
+    --accent-blue: #0D47A1;
   }
   section {
     font-size: var(--body-size);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--dark-grey);
+    background-color: #fff;
   }
   h1 {
     font-size: var(--title-size);
-    color: #2196F3;
+    color: var(--primary-blue);
+    border-bottom: 3px solid var(--secondary-blue);
+    padding-bottom: 0.3em;
   }
   h2 {
     font-size: var(--subtitle-size);
-    color: #FF9800;
+    color: var(--accent-blue);
   }
   h3 {
     font-size: calc(var(--base-font-size) * 1.1);
-    color: #4CAF50;
+    color: var(--medium-grey);
   }
   code {
     font-size: var(--small-size);
+    background-color: var(--light-grey);
+    padding: 0.1em 0.3em;
+    border-radius: 3px;
   }
   table {
     font-size: var(--small-size);
+    border-collapse: collapse;
+  }
+  table th {
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 0.5em;
+  }
+  table td {
+    border: 1px solid var(--light-grey);
+    padding: 0.5em;
   }
   .small {
     font-size: var(--small-size);
@@ -42,25 +64,32 @@ style: |
     font-size: var(--tiny-size);
   }
   .highlight {
-    background-color: #FFF9C4;
+    background-color: var(--light-grey);
     padding: 0.2em 0.4em;
     border-radius: 3px;
+    border-left: 4px solid var(--secondary-blue);
   }
   .success {
-    color: #4CAF50;
+    color: var(--primary-blue);
     font-weight: bold;
   }
-  .warning {
-    color: #FF9800;
+  .status-live {
+    color: var(--primary-blue);
     font-weight: bold;
   }
-  .error {
-    color: #F44336;
+  .status-pending {
+    color: var(--medium-grey);
     font-weight: bold;
+  }
+  ul, ol {
+    line-height: 1.6;
+  }
+  strong {
+    color: var(--accent-blue);
   }
 ---
 
-# 🍽️ AI-Powered Food Ordering
+# AI-Powered Food Ordering
 
 **Making food ordering as easy as conversation**
 
@@ -68,8 +97,8 @@ Order food naturally through ChatGPT - no app switching, no forms
 
 <div class="small">
 
-📍 **Status:** Live & Ready to Scale
-🚀 **Goal:** Default ChatGPT Integration
+**Status:** Live & Ready to Scale
+**Goal:** Default ChatGPT Integration
 
 </div>
 
@@ -88,20 +117,22 @@ Order food naturally through ChatGPT - no app switching, no forms
 
 <div class="highlight">70% of users already use ChatGPT daily</div>
 
-**Vision:** Order food where users already are — **in ChatGPT**
+**Vision:** Order food where users already are - in ChatGPT
 
 ---
 
-## Two Approaches
+## Three Approaches
 
 | Approach | Experience | Setup | Availability | Interactive UI |
 |----------|-----------|-------|--------------|----------------|
-| **Custom GPT** | Conversational | Low | Public | ❌ No |
-| **MCP Connector** | Conversational + Visual | Medium | Organization | ✅ Yes |
+| **Custom GPT** | Conversational | Low | Public | No |
+| **GPT + Web App** | Hybrid | Low | Public | External |
+| **MCP Connector** | Conversational + Visual | Medium | Organization | In ChatGPT |
 
 <div class="small">
 
 **Custom GPT:** Quick MVP, text-only, works now
+**GPT + Web App:** Redirect to visual interface, immediate deployment
 **MCP Connector:** Future-ready, interactive UI in ChatGPT, waiting for public access
 
 </div>
@@ -112,38 +143,45 @@ Order food naturally through ChatGPT - no app switching, no forms
 
 ### Architecture
 
-```mermaid
-graph LR
-    A[User] -->|Chat| B[Custom GPT]
-    B -->|API| C[Backend]
-    C -->|Data| D[Restaurants]
-    style B fill:#4CAF50
-```
+**User in ChatGPT** → **Custom GPT** → **API Actions** → **Backend API** → **Restaurant Data**
 
 ### User Flow
 
-1. "I want to order food" → Shows cities
-2. "Bangalore" → Shows cuisines  
-3. "Indian" → Lists restaurants
-4. "Show menu for Spice Garden" → Displays menu
-5. "Butter Chicken + Naan" → Collects address, places order
+1. "I want to order food" - Shows cities
+2. "Bangalore" - Shows cuisines  
+3. "Indian" - Lists restaurants
+4. "Show menu for Spice Garden" - Displays menu
+5. "Butter Chicken + Naan" - Collects address, places order
 
-<div class="success">✅ LIVE: Ready to publish to GPT Store</div>
+<div class="status-live">LIVE: Ready to publish to GPT Store</div>
 
 ---
 
-## Approach 2: MCP Connector
+## Approach 2: GPT + Web App
 
 ### Architecture
 
-```mermaid
-graph TB
-    A[User in ChatGPT] -->|MCP| B[MCP Server]
-    B -->|UI Widget| C[React Component]
-    C -->|Renders in| A
-    B -->|API| D[Backend]
-    style B fill:#7B1FA2
-```
+**User in ChatGPT** → **Custom GPT** → **Directs to Web App** → **User clicks link** → **React Web App** → **Backend API**
+
+### Key Features
+
+- Visual menu browsing with photos
+- Restaurant cards with ratings
+- Real-time cart management
+- Familiar e-commerce UI
+- Works without ChatGPT Plus
+
+<div class="status-live">LIVE: Deployed and accessible</div>
+
+**URL:** ai-food-ordering-app-ten.vercel.app
+
+---
+
+## Approach 3: MCP Connector
+
+### Architecture
+
+**User in ChatGPT** → **MCP Protocol** → **MCP Server** → **UI Widget** → **Renders in ChatGPT** → **Backend API**
 
 ### Key Difference
 
@@ -154,40 +192,14 @@ graph TB
 - No page switching
 - Best user experience
 
-<div class="warning">⏸️ DEPLOYED: Waiting for public MCP access</div>
+<div class="status-pending">DEPLOYED: Waiting for public MCP access</div>
 
 ---
 
-## Technical Stack
-
-### Frontend
-- React 18.3 + TypeScript
-- Vite + Tailwind CSS 3.4
-- Vercel hosting
-
-### Backend
-- FastAPI (Python)
-- 16 restaurants, 5 cities
-- Vercel serverless
-
-### MCP Server
-- Node.js 20+ + MCP SDK 1.22
-- Vercel serverless
-
-<div class="tiny">
-
-**URLs:**
-Web: `ai-food-ordering-app-ten.vercel.app`
-API: `ai-food-ordering-poc.vercel.app`
-MCP: `ai-food-ordering-app-ten.vercel.app/api/mcp`
-
-</div>
-
----
 
 ## Global Deployment Strategy
 
-### Phase 1: GPT Store (Now) ⭐
+### Phase 1: GPT Store (Now)
 
 **Publish Custom GPT to OpenAI's marketplace**
 
@@ -204,7 +216,7 @@ MCP: `ai-food-ordering-app-ten.vercel.app/api/mcp`
 - One-click enable
 - Works in default ChatGPT
 
-<div class="success">✅ Already built and deployed - first-mover advantage!</div>
+<div class="status-live">Already built and deployed - first-mover advantage</div>
 
 ---
 
@@ -238,7 +250,7 @@ Timeline: 12+ months
 
 ## 12-Month Roadmap
 
-### Month 1-3: Launch ✅
+### Month 1-3: Launch
 - Publish to GPT Store
 - Deploy MCP connector
 - Reach 100 users
@@ -284,10 +296,10 @@ Timeline: 12+ months
 ## GPT Store Publishing
 
 ### Prerequisites
-- ✅ ChatGPT Plus account
-- ✅ Custom GPT built & tested
-- ✅ Clear name & description
-- ✅ Profile image
+- ChatGPT Plus account
+- Custom GPT built and tested
+- Clear name and description
+- Profile image
 
 ### Process
 1. **Optimize:** Name, description, conversation starters
@@ -295,7 +307,7 @@ Timeline: 12+ months
 3. **Test:** End-to-end user flows
 4. **Publish:** Submit to GPT Store
 5. **Wait:** 1-3 days for approval
-6. **Launch:** Share & market
+6. **Launch:** Share and market
 
 <div class="small">Categories: Lifestyle, Productivity</div>
 
@@ -304,18 +316,18 @@ Timeline: 12+ months
 ## Immediate Next Steps
 
 ### This Week
-- [ ] Review GPT description
-- [ ] Create profile image
-- [ ] Test end-to-end
-- [ ] Publish to GPT Store
-- [ ] Wait for Developer Mode access
+- Review GPT description
+- Create profile image
+- Test end-to-end
+- Publish to GPT Store
+- Wait for Developer Mode access
 
 ### Month 1
-- [ ] GPT Store approval
-- [ ] Create demo video
-- [ ] Social media launch
-- [ ] Reach 100 users
-- [ ] Deploy MCP (when access granted)
+- GPT Store approval
+- Create demo video
+- Social media launch
+- Reach 100 users
+- Deploy MCP (when access granted)
 
 ---
 
@@ -361,7 +373,7 @@ Timeline: 12+ months
 ## Risk Mitigation
 
 ### Technical Risks
-- **API limits:** Caching + rate limiting
+- **API limits:** Caching and rate limiting
 - **Scaling:** Serverless auto-scales
 - **Downtime:** 99.9% SLA monitoring
 
@@ -426,27 +438,27 @@ Timeline: 12+ months
 3. **MCP Server:** Health check
 4. **Backend API:** Live endpoints
 
-<div class="highlight">Let's see it in action! 🚀</div>
+<div class="highlight">Let's see it in action</div>
 
 ---
 
 ## Key Takeaways
 
 ### What We Have
-- ✅ Working Custom GPT
-- ✅ Interactive web app
-- ✅ MCP connector deployed
-- ✅ Complete documentation
-- ✅ Ready to publish
+- Working Custom GPT
+- Interactive web app
+- MCP connector deployed
+- Complete documentation
+- Ready to publish
 
 ### What's Next
-- 🎯 Publish to GPT Store (this week)
-- 🎯 Market to early adopters
-- 🎯 Deploy MCP (when access granted)
-- 🎯 Grow to 10K users (6 months)
-- 🎯 OpenAI partnership (12 months)
+- Publish to GPT Store (this week)
+- Market to early adopters
+- Deploy MCP (when access granted)
+- Grow to 10K users (6 months)
+- OpenAI partnership (12 months)
 
-<div class="success">We're ready to launch! 🚀</div>
+<div class="status-live">We're ready to launch</div>
 
 ---
 
@@ -459,8 +471,37 @@ Timeline: 12+ months
 **No apps. No forms. Just conversation.**
 
 <div class="highlight" style="font-size: var(--subtitle-size); margin-top: 1em;">
-In 12 months, food ordering in ChatGPT should be as common as asking for weather.
+In 12 months, food ordering in ChatGPT should be as common as asking for weather
 </div>
+
+</div>
+
+---
+
+## Technical Stack
+
+### Frontend
+- React 18.3 with TypeScript
+- Vite build tool
+- Tailwind CSS 3.4
+- Vercel hosting
+
+### Backend
+- FastAPI (Python)
+- 16 restaurants across 5 cities
+- Vercel serverless functions
+
+### MCP Server
+- Node.js 20+
+- MCP SDK 1.22
+- Vercel serverless
+
+<div class="tiny">
+
+**Production URLs:**
+Web: `ai-food-ordering-app-ten.vercel.app`
+API: `ai-food-ordering-poc.vercel.app`
+MCP: `ai-food-ordering-app-ten.vercel.app/api/mcp`
 
 </div>
 
@@ -486,17 +527,17 @@ In 12 months, food ordering in ChatGPT should be as common as asking for weather
 
 ---
 
-# Thank You! 🍽️
+# Thank You
 
 **Let's make food ordering conversational**
 
 <div style="text-align: center; padding: 2em;">
 
-Ready to launch? 🚀
+Ready to launch?
 
-Questions? 🤔
+Questions?
 
-Let's discuss! 💬
+Let's discuss
 
 </div>
 
