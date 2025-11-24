@@ -206,15 +206,44 @@ UI: Updates to show menu
 
 ## 🚀 Deployment
 
-### Option 1: Deploy MCP Server to Vercel
+### Option 1: Deploy to Vercel ⭐ **RECOMMENDED**
 
-Create `api/mcp.js`:
-```javascript
-import { createFoodOrderingServer } from '../server/mcp-server.js';
-// ... Vercel serverless function wrapper
+We've already created `api/mcp.js` for Vercel serverless!
+
+**Steps**:
+
+1. **Push to GitHub**:
+```bash
+git add .
+git commit -m "Add MCP serverless function"
+git push origin main
 ```
 
+2. **Deploy on Vercel**:
+   - Go to https://vercel.com
+   - Import `ai-food-ordering-app` repository
+   - Vercel auto-detects Vite
+   - Click "Deploy"
+
+3. **MCP Endpoint**:
+   - Your MCP server will be at: `https://ai-food-ordering-app-ten.vercel.app/api/mcp`
+   - Use this URL in ChatGPT connector!
+
+4. **Update ChatGPT Connector**:
+   - Go to Settings → Connectors
+   - Edit your connector
+   - Update URL to: `https://ai-food-ordering-app-ten.vercel.app/api/mcp`
+   - Save
+
+**Benefits**:
+- ✅ No ngrok needed
+- ✅ Always online
+- ✅ Production-ready
+- ✅ Auto-deploys on push
+
 ### Option 2: Deploy to Railway/Render
+
+For long-running Node server:
 
 ```bash
 # Push to GitHub
@@ -225,9 +254,14 @@ git push origin main
 # Port: 8787
 ```
 
-### Option 3: Keep Local (Development)
+### Option 3: Local Development
 
-Use ngrok for testing, deploy later.
+Use ngrok for testing:
+
+```bash
+npm run mcp
+ngrok http 8787
+```
 
 ---
 

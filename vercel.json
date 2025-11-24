@@ -4,9 +4,19 @@
   "framework": "vite",
   "rewrites": [
     {
+      "source": "/api/mcp",
+      "destination": "/api/mcp"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/mcp.js": {
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  }
 }
 
