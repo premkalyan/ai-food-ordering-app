@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { api, Restaurant } from '../services/api';
+import { api, Restaurant, MenuItem, OrderItem } from '../services/api';
 
 interface Message {
   id: string;
@@ -7,24 +7,36 @@ interface Message {
   content: string;
   timestamp: Date;
   restaurants?: Restaurant[];
-  suggestedItems?: any[];
+  menuItems?: MenuItem[];
+  cartSummary?: { items: OrderItem[]; total: number };
 }
 
 interface ChatInterfaceProps {
   onSelectRestaurant?: (restaurant: Restaurant) => void;
 }
 
-export function ChatInterface({ onSelectRestaurant }: ChatInterfaceProps) {
+interface ChatState {
+  stage: 'search' | 'restaurant_selected' | 'viewing_menu' | 'adding_items' | 'checkout' | 'order_placed';
+  selectedRestaurant?: Restaurant;
+  cart: OrderItem[];
+  lastSearchResults?: Restaurant[];
+}
+
+export function ChatInterface({}: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       role: 'assistant',
-      content: "👋 Hi! I'm your AI food ordering assistant. You can ask me things like:\n\n• \"I want Chicken Tikka Masala in New York\"\n• \"Find Italian food under $20\"\n• \"I'm hungry, get me something spicy in 30 minutes\"\n• \"Show me sushi restaurants in Los Angeles\"\n\nWhat are you craving today?",
+      content: "👋 Hi! I'm your AI food ordering assistant. You can ask me things like:\n\n• \"I want Chicken Tikka Masala in New York\"\n• \"Find Italian food under $20\"\n• \"I'm hungry, get me something spicy in 30 minutes\"\n\nWhat are you craving today?",
       timestamp: new Date(),
     },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [chatState, setChatState] = useState<ChatState>({ 
+    stage: 'search',
+    cart: [] 
+  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -35,67 +47,311 @@ export function ChatInterface({ onSelectRestaurant }: ChatInterfaceProps) {
     scrollToBottom();
   }, [messages]);
 
+  const addMessage = (role: 'user' | 'assistant', content: string, extra?: Partial<Message>) => {
+    const newMessage: Message = {
+      id: Date.now().toString(),
+      role,
+      content,
+      timestamp: new Date(),
+      ...extra,
+    };
+    setMessages(prev => [...prev, newMessage]);
+    return newMessage;
+  };
+
+  const handleRestaurantSelection = async (restaurant: Restaurant, userInput: string) => {
+    // User selected a restaurant
+    addMessage('user', userInput);
+    setLoading(true);
+
+    try {
+      // Fetch menu
+      const menuData = await api.getMenu(restaurant.id);
+      
+      // Build menu display
+      let menuText = `Great choice! Here's the menu for **${restaurant.name}**:\n\n`;
+      
+      menuData.categories.forEach((category, idx) => {
+        menuText += `**${category.name}**\n`;
+        category.items.forEach((item, itemIdx) => {
+          const num = idx * 10 + itemIdx + 1;
+          const tags = [];
+          if (item.vegetarian) tags.push('🥬');
+          if (item.spicy) tags.push('🌶️');
+          if (item.popular) tags.push('⭐');
+          menuText += `${num}. ${item.name} - $${item.price} ${tags.join(' ')}\n`;
+          menuText += `   ${item.description}\n`;
+        });
+        menuText += '\n';
+      });
+
+      menuText += `\nTo order, just tell me:\n• Item number and quantity (e.g., "I'll take 2 of item 1")\n• Or item name (e.g., "Add Chicken Tikka Masala to cart")\n• Say "show cart" to review\n• Say "checkout" when ready`;
+
+      // Flatten menu items for easy lookup
+      const allItems = menuData.categories.flatMap(cat => cat.items);
+
+      setChatState({
+        stage: 'viewing_menu',
+        selectedRestaurant: restaurant,
+        cart: chatState.cart,
+      });
+
+      addMessage('assistant', menuText, { menuItems: allItems });
+    } catch (error) {
+      addMessage('assistant', "Sorry, I couldn't load the menu. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddToCart = (item: MenuItem, quantity: number) => {
+    const existingItem = chatState.cart.find(cartItem => cartItem.item_id === item.id);
+    
+    let newCart: OrderItem[];
+    if (existingItem) {
+      newCart = chatState.cart.map(cartItem =>
+        cartItem.item_id === item.id
+          ? { ...cartItem, quantity: cartItem.quantity + quantity }
+          : cartItem
+      );
+    } else {
+      newCart = [
+        ...chatState.cart,
+        {
+          item_id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity,
+        },
+      ];
+    }
+
+    setChatState(prev => ({ ...prev, cart: newCart, stage: 'adding_items' }));
+
+    const total = newCart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    let response = `✅ Added ${quantity}x ${item.name} to your cart!\n\n`;
+    response += `**Current Cart:**\n`;
+    newCart.forEach(cartItem => {
+      response += `• ${cartItem.quantity}x ${cartItem.name} - $${(cartItem.price * cartItem.quantity).toFixed(2)}\n`;
+    });
+    response += `\n**Subtotal: $${total.toFixed(2)}**\n\n`;
+    response += `What else would you like? Or say "checkout" to complete your order.`;
+
+    addMessage('assistant', response, { 
+      cartSummary: { items: newCart, total } 
+    });
+  };
+
+  const handleCheckout = async () => {
+    if (chatState.cart.length === 0) {
+      addMessage('assistant', "Your cart is empty! Please add some items first.");
+      return;
+    }
+
+    if (!chatState.selectedRestaurant) {
+      addMessage('assistant', "Something went wrong. Please start over.");
+      return;
+    }
+
+    const subtotal = chatState.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const deliveryFee = chatState.selectedRestaurant.delivery_fee;
+    const tax = subtotal * 0.0875;
+    const total = subtotal + deliveryFee + tax;
+
+    let checkoutText = `**Order Summary**\n\n`;
+    checkoutText += `Restaurant: ${chatState.selectedRestaurant.name}\n\n`;
+    checkoutText += `**Items:**\n`;
+    chatState.cart.forEach(item => {
+      checkoutText += `• ${item.quantity}x ${item.name} - $${(item.price * item.quantity).toFixed(2)}\n`;
+    });
+    checkoutText += `\n**Subtotal:** $${subtotal.toFixed(2)}\n`;
+    checkoutText += `**Delivery Fee:** $${deliveryFee.toFixed(2)}\n`;
+    checkoutText += `**Tax:** $${tax.toFixed(2)}\n`;
+    checkoutText += `**Total:** $${total.toFixed(2)}\n\n`;
+    checkoutText += `Delivery to: ${chatState.selectedRestaurant.location.city}\n`;
+    checkoutText += `Estimated time: ${chatState.selectedRestaurant.delivery_time}\n\n`;
+    checkoutText += `Type "confirm" to place your order, or "cancel" to go back.`;
+
+    setChatState(prev => ({ ...prev, stage: 'checkout' }));
+    addMessage('assistant', checkoutText);
+  };
+
+  const handleConfirmOrder = async () => {
+    if (!chatState.selectedRestaurant) return;
+
+    setLoading(true);
+    try {
+      const order = await api.createOrder({
+        restaurant_id: chatState.selectedRestaurant.id,
+        items: chatState.cart,
+        delivery_address: {
+          address: '123 Main St',
+          city: chatState.selectedRestaurant.location.city,
+          state: chatState.selectedRestaurant.location.state,
+          zip: chatState.selectedRestaurant.location.zip,
+        },
+      });
+
+      let confirmText = `🎉 **Order Confirmed!**\n\n`;
+      confirmText += `Order ID: **${order.id}**\n`;
+      confirmText += `Restaurant: ${order.restaurant_name}\n`;
+      confirmText += `Status: ${order.status}\n`;
+      confirmText += `Estimated Delivery: ${order.estimated_delivery}\n\n`;
+      confirmText += `Total Paid: **$${order.total.toFixed(2)}**\n\n`;
+      confirmText += `Your food is on its way! 🚗\n\n`;
+      confirmText += `Say "track order" to see real-time updates, or "start over" for a new order.`;
+
+      setChatState({
+        stage: 'order_placed',
+        cart: [],
+        selectedRestaurant: undefined,
+      });
+
+      addMessage('assistant', confirmText);
+    } catch (error) {
+      addMessage('assistant', "Sorry, there was an error placing your order. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSend = async () => {
     if (!input.trim() || loading) return;
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: input,
-      timestamp: new Date(),
-    };
-
-    setMessages(prev => [...prev, userMessage]);
+    const userInput = input.trim();
     setInput('');
     setLoading(true);
 
     try {
-      // Call intelligent search API
-      const result = await api.intelligentSearch(input);
+      // Handle different stages
+      if (chatState.stage === 'checkout') {
+        addMessage('user', userInput);
+        if (userInput.toLowerCase().includes('confirm') || userInput.toLowerCase().includes('yes')) {
+          await handleConfirmOrder();
+        } else if (userInput.toLowerCase().includes('cancel') || userInput.toLowerCase().includes('no')) {
+          setChatState(prev => ({ ...prev, stage: 'adding_items' }));
+          addMessage('assistant', "No problem! What would you like to do?\n• Add more items\n• Remove items\n• Checkout when ready");
+        }
+        setLoading(false);
+        return;
+      }
 
-      let responseContent = '';
-      if (result.restaurants && result.restaurants.length > 0) {
-        responseContent = `I found ${result.restaurants.length} restaurant${result.restaurants.length > 1 ? 's' : ''} matching your request:\n\n`;
+      // Handle menu item selection
+      if (chatState.stage === 'viewing_menu' || chatState.stage === 'adding_items') {
+        addMessage('user', userInput);
+
+        // Check for cart commands
+        if (userInput.toLowerCase().includes('show cart') || userInput.toLowerCase().includes('view cart')) {
+          if (chatState.cart.length === 0) {
+            addMessage('assistant', "Your cart is empty. Add some items first!");
+          } else {
+            const total = chatState.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            let cartText = `**Your Cart:**\n\n`;
+            chatState.cart.forEach(item => {
+              cartText += `• ${item.quantity}x ${item.name} - $${(item.price * item.quantity).toFixed(2)}\n`;
+            });
+            cartText += `\n**Subtotal: $${total.toFixed(2)}**\n\n`;
+            cartText += `Say "checkout" to complete your order, or add more items!`;
+            addMessage('assistant', cartText);
+          }
+          setLoading(false);
+          return;
+        }
+
+        if (userInput.toLowerCase().includes('checkout')) {
+          await handleCheckout();
+          setLoading(false);
+          return;
+        }
+
+        // Try to parse item selection
+        // Look for patterns like "2 of item 1", "add item 3", "I'll take Chicken Tikka Masala"
+        const lastMessage = messages[messages.length - 1];
+        if (lastMessage.menuItems) {
+          // Try to find item by number or name
+          const numberMatch = userInput.match(/(\d+)\s*(?:of\s*)?(?:item\s*)?(\d+)|(?:item\s*)?(\d+)/i);
+          const quantity = numberMatch ? parseInt(numberMatch[1] || '1') : 1;
+          const itemNumber = numberMatch ? parseInt(numberMatch[2] || numberMatch[3] || '0') : 0;
+
+          let selectedItem: MenuItem | undefined;
+
+          if (itemNumber > 0 && itemNumber <= lastMessage.menuItems.length) {
+            selectedItem = lastMessage.menuItems[itemNumber - 1];
+          } else {
+            // Try to find by name
+            selectedItem = lastMessage.menuItems.find(item =>
+              userInput.toLowerCase().includes(item.name.toLowerCase())
+            );
+          }
+
+          if (selectedItem) {
+            handleAddToCart(selectedItem, quantity);
+            setLoading(false);
+            return;
+          }
+        }
+
+        addMessage('assistant', "I didn't understand that. Please:\n• Use item numbers (e.g., 'I'll take item 1')\n• Or item names (e.g., 'Add Chicken Tikka Masala')\n• Say 'show cart' to review\n• Say 'checkout' when ready");
+        setLoading(false);
+        return;
+      }
+
+      // Handle restaurant selection from search results
+      if (chatState.stage === 'search' && chatState.lastSearchResults) {
+        addMessage('user', userInput);
         
-        result.restaurants.slice(0, 3).forEach((restaurant, index) => {
-          responseContent += `${index + 1}. **${restaurant.name}** (${restaurant.cuisine})\n`;
-          responseContent += `   ⭐ ${restaurant.rating} stars | 🕒 ${restaurant.delivery_time}\n`;
+        // Try to parse restaurant selection
+        const numberMatch = userInput.match(/(\d+)/);
+        if (numberMatch) {
+          const restaurantNumber = parseInt(numberMatch[1]);
+          if (restaurantNumber > 0 && restaurantNumber <= chatState.lastSearchResults.length) {
+            const restaurant = chatState.lastSearchResults[restaurantNumber - 1];
+            await handleRestaurantSelection(restaurant, `Show me the menu for ${restaurant.name}`);
+            setLoading(false);
+            return;
+          }
+        }
+
+        // Try to find by name
+        const restaurant = chatState.lastSearchResults.find(r =>
+          userInput.toLowerCase().includes(r.name.toLowerCase())
+        );
+        if (restaurant) {
+          await handleRestaurantSelection(restaurant, `Show me the menu for ${restaurant.name}`);
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Default: Intelligent search
+      addMessage('user', userInput);
+
+      const result = await api.intelligentSearch(userInput);
+
+      if (result.restaurants && result.restaurants.length > 0) {
+        let responseContent = `I found ${result.restaurants.length} restaurant${result.restaurants.length > 1 ? 's' : ''} matching your request:\n\n`;
+        
+        result.restaurants.slice(0, 5).forEach((restaurant, index) => {
+          responseContent += `**${index + 1}. ${restaurant.name}** (${restaurant.cuisine})\n`;
+          responseContent += `   ⭐ ${restaurant.rating} stars | 🕒 ${restaurant.delivery_time} | 💰 ${restaurant.price_range}\n`;
           responseContent += `   📍 ${restaurant.location.city}\n\n`;
         });
 
-        if (result.suggested_items && result.suggested_items.length > 0) {
-          responseContent += `\n**Suggested items:**\n`;
-          result.suggested_items.slice(0, 3).forEach((item) => {
-            responseContent += `• ${item.name} - $${item.price}\n`;
-          });
-        }
+        responseContent += `\nWhich restaurant would you like? Just type the number (e.g., "1") or the name.`;
 
-        responseContent += `\nClick on a restaurant to see the full menu!`;
+        setChatState({
+          stage: 'search',
+          cart: [],
+          lastSearchResults: result.restaurants,
+        });
+
+        addMessage('assistant', responseContent, { restaurants: result.restaurants });
       } else {
-        responseContent = `I couldn't find restaurants matching your criteria. Try:\n\n• Adjusting your budget\n• Different cuisine\n• Longer delivery time\n• Browse all restaurants`;
+        addMessage('assistant', `I couldn't find restaurants matching your criteria. Try:\n\n• Adjusting your budget\n• Different cuisine\n• Longer delivery time\n\nWhat else can I help you find?`);
       }
-
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: responseContent,
-        timestamp: new Date(),
-        restaurants: result.restaurants,
-        suggestedItems: result.suggested_items,
-      };
-
-      setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
-      console.error('Search failed:', error);
-      
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: "Sorry, I encountered an error. Please try again or browse restaurants manually.",
-        timestamp: new Date(),
-      };
-
-      setMessages(prev => [...prev, errorMessage]);
+      console.error('Chat error:', error);
+      addMessage('assistant', "Sorry, I encountered an error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -123,7 +379,7 @@ export function ChatInterface({ onSelectRestaurant }: ChatInterfaceProps) {
           <span className="text-3xl">🤖</span>
           <div>
             <h3 className="font-bold text-lg">AI Food Assistant</h3>
-            <p className="text-sm opacity-90">Ask me anything about food!</p>
+            <p className="text-sm opacity-90">Complete ordering in chat!</p>
           </div>
         </div>
       </div>
@@ -136,41 +392,13 @@ export function ChatInterface({ onSelectRestaurant }: ChatInterfaceProps) {
             className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-[80%] rounded-lg p-4 ${
+              className={`max-w-[85%] rounded-lg p-4 ${
                 message.role === 'user'
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-900'
               }`}
             >
               <div className="whitespace-pre-wrap">{message.content}</div>
-              
-              {/* Restaurant Cards */}
-              {message.restaurants && message.restaurants.length > 0 && (
-                <div className="mt-4 space-y-2">
-                  {message.restaurants.slice(0, 3).map((restaurant) => (
-                    <div
-                      key={restaurant.id}
-                      onClick={() => onSelectRestaurant?.(restaurant)}
-                      className="bg-white text-gray-900 p-3 rounded-lg cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-bold">{restaurant.name}</p>
-                          <p className="text-sm text-gray-600">{restaurant.cuisine}</p>
-                          <div className="flex items-center space-x-3 mt-1 text-xs text-gray-500">
-                            <span>⭐ {restaurant.rating}</span>
-                            <span>🕒 {restaurant.delivery_time}</span>
-                            <span>💰 {restaurant.price_range}</span>
-                          </div>
-                        </div>
-                        <button className="text-blue-600 font-semibold text-sm">
-                          View Menu →
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
 
               <p className="text-xs opacity-70 mt-2">
                 {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -219,7 +447,7 @@ export function ChatInterface({ onSelectRestaurant }: ChatInterfaceProps) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ask me anything... (e.g., 'I want pizza in 30 minutes')"
+            placeholder="Type your message..."
             className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             disabled={loading}
           />
@@ -238,4 +466,3 @@ export function ChatInterface({ onSelectRestaurant }: ChatInterfaceProps) {
     </div>
   );
 }
-
