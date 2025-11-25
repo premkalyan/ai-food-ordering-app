@@ -31,6 +31,11 @@ interface ChatState {
   lastOrderId?: string;
 }
 
+interface Favorites {
+  restaurants: string[]; // Restaurant IDs
+  dishes: string[]; // Menu item IDs
+}
+
 export function ChatInterface({}: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -46,7 +51,17 @@ export function ChatInterface({}: ChatInterfaceProps) {
     stage: 'search',
     cart: [] 
   });
+  const [favorites, setFavorites] = useState<Favorites>(() => {
+    // Load from localStorage
+    const saved = localStorage.getItem('favorites');
+    return saved ? JSON.parse(saved) : { restaurants: [], dishes: [] };
+  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Save favorites to localStorage
+  useEffect(() => {
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+  }, [favorites]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -187,6 +202,77 @@ export function ChatInterface({}: ChatInterfaceProps) {
         });
         addMessage('assistant', "Let's start fresh! What are you craving today?");
         break;
+      case 'toggle_favorite_restaurant':
+        const restaurant = data;
+        const isFavorited = favorites.restaurants.includes(restaurant.id);
+        
+        if (isFavorited) {
+          setFavorites(prev => ({
+            ...prev,
+            restaurants: prev.restaurants.filter(id => id !== restaurant.id),
+          }));
+          addMessage('user', `Remove ${restaurant.name} from favorites`);
+          addMessage('assistant', `💔 Removed ${restaurant.name} from your favorites.`);
+        } else {
+          setFavorites(prev => ({
+            ...prev,
+            restaurants: [...prev.restaurants, restaurant.id],
+          }));
+          addMessage('user', `Add ${restaurant.name} to favorites`);
+          addMessage('assistant', `⭐ Added ${restaurant.name} to your favorites!`);
+        }
+        break;
+      
+      case 'toggle_favorite_dish':
+        const dish = data;
+        const isDishFavorited = favorites.dishes.includes(dish.id);
+        
+        if (isDishFavorited) {
+          setFavorites(prev => ({
+            ...prev,
+            dishes: prev.dishes.filter(id => id !== dish.id),
+          }));
+          addMessage('user', `Remove ${dish.name} from favorites`);
+          addMessage('assistant', `💔 Removed ${dish.name} from your favorites.`);
+        } else {
+          setFavorites(prev => ({
+            ...prev,
+            dishes: [...prev.dishes, dish.id],
+          }));
+          addMessage('user', `Add ${dish.name} to favorites`);
+          addMessage('assistant', `⭐ Added ${dish.name} to your favorites!`);
+        }
+        break;
+      
+      case 'show_favorites':
+        userMessage = 'Show my favorites';
+        addMessage('user', userMessage);
+        
+        if (favorites.restaurants.length === 0 && favorites.dishes.length === 0) {
+          addMessage('assistant', "You don't have any favorites yet! ⭐\n\nClick the ⭐ button next to restaurants or dishes to add them to your favorites.");
+        } else {
+          let favText = `⭐ **Your Favorites** (${favorites.restaurants.length + favorites.dishes.length} items)\n\n`;
+          
+          if (favorites.restaurants.length > 0) {
+            favText += `**Favorite Restaurants:**\n`;
+            favorites.restaurants.forEach((id, idx) => {
+              favText += `${idx + 1}. Restaurant ID: ${id}\n`;
+            });
+            favText += '\n';
+          }
+          
+          if (favorites.dishes.length > 0) {
+            favText += `**Favorite Dishes:**\n`;
+            favorites.dishes.forEach((id, idx) => {
+              favText += `${idx + 1}. Dish ID: ${id}\n`;
+            });
+          }
+          
+          favText += '\nStart a new search to order from your favorites!';
+          addMessage('assistant', favText);
+        }
+        break;
+      
       case 'continue_shopping':
         // Just show the menu again
         if (chatState.selectedRestaurant) {
@@ -252,17 +338,30 @@ export function ChatInterface({}: ChatInterfaceProps) {
       const allItems = menuData.categories.flatMap(cat => cat.items);
 
       // Create buttons for each menu item
-      const menuButtons: MessageButton[] = allItems.map((item, idx) => {
+      const menuButtons: MessageButton[] = [];
+      
+      allItems.forEach((item, idx) => {
         const tags = [];
         if (item.vegetarian) tags.push('🥬');
         if (item.spicy) tags.push('🌶️');
         if (item.popular) tags.push('⭐');
-        return {
+        const isFav = favorites.dishes.includes(item.id);
+        
+        // Add to cart button
+        menuButtons.push({
           label: `${idx + 1}. ${item.name} ($${item.price}) ${tags.join(' ')}`,
           action: 'add_item',
           data: item,
           variant: 'secondary' as const,
-        };
+        });
+        
+        // Favorite toggle button (smaller, inline)
+        menuButtons.push({
+          label: isFav ? '⭐' : '☆',
+          action: 'toggle_favorite_dish',
+          data: item,
+          variant: 'secondary' as const,
+        });
       });
 
       // Add cart and checkout buttons at the end
@@ -601,12 +700,27 @@ export function ChatInterface({}: ChatInterfaceProps) {
         responseContent += `\nClick a button below to view the menu:`;
 
         // Create buttons for each restaurant
-        const restaurantButtons: MessageButton[] = result.restaurants.slice(0, 5).map((restaurant, index) => ({
-          label: `${index + 1}. ${restaurant.name}`,
-          action: 'select_restaurant',
-          data: restaurant,
-          variant: 'primary' as const,
-        }));
+        const restaurantButtons: MessageButton[] = [];
+        
+        result.restaurants.slice(0, 5).forEach((restaurant, index) => {
+          const isFav = favorites.restaurants.includes(restaurant.id);
+          
+          // Main restaurant button
+          restaurantButtons.push({
+            label: `${index + 1}. ${restaurant.name}`,
+            action: 'select_restaurant',
+            data: restaurant,
+            variant: 'primary' as const,
+          });
+          
+          // Favorite toggle button
+          restaurantButtons.push({
+            label: isFav ? '⭐ Favorited' : '☆ Add to Favorites',
+            action: 'toggle_favorite_restaurant',
+            data: restaurant,
+            variant: 'secondary' as const,
+          });
+        });
 
         setChatState({
           stage: 'search',
@@ -762,15 +876,12 @@ export function ChatInterface({}: ChatInterfaceProps) {
             </button>
           )}
           <button
-            onClick={() => {
-              addMessage('user', 'Show me my favorites');
-              addMessage('assistant', "🌟 Favorites feature coming soon! For now, try:\n• 'Chicken Tikka Masala in New York'\n• 'Italian food under $20'\n• 'Sushi in Los Angeles'");
-            }}
+            onClick={() => handleButtonClick('show_favorites')}
             disabled={loading}
             className="px-3 py-1.5 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
           >
             <span>⭐</span>
-            <span>My Favorites</span>
+            <span>My Favorites ({favorites.restaurants.length + favorites.dishes.length})</span>
           </button>
           {chatState.selectedRestaurant && chatState.stage === 'adding_items' && (
             <button
