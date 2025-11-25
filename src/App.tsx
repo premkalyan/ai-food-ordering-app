@@ -8,6 +8,7 @@ import { Checkout } from './components/Checkout';
 import { OrderConfirmation } from './components/OrderConfirmation';
 import { OrderTracking } from './components/OrderTracking';
 import { ChatInterface } from './components/ChatInterface';
+import { PlatformSwitcher } from './components/PlatformSwitcher';
 import { Restaurant, MenuItem, OrderItem, Order } from './services/api';
 
 type AppState = 
@@ -82,6 +83,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
+      {/* Platform Switcher (for testing) */}
+      <PlatformSwitcher />
+
       {/* Floating Chat Button */}
       {!showChat && state.screen !== 'chat' && (
         <button
