@@ -93,17 +93,35 @@ function App() {
         </button>
       )}
 
-      {/* Chat Modal */}
+      {/* Chat Panel - Right Half of Screen */}
       {showChat && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-          <div className="relative w-full max-w-2xl">
-            <button
-              onClick={() => setShowChat(false)}
-              className="absolute -top-12 right-0 text-white hover:text-gray-300 text-3xl"
-            >
-              ✕
-            </button>
-            <ChatInterface onSelectRestaurant={handleChatSelectRestaurant} />
+        <div className="fixed inset-0 z-50 flex">
+          {/* Left side - backdrop */}
+          <div 
+            className="flex-1 bg-black bg-opacity-50"
+            onClick={() => setShowChat(false)}
+          />
+          
+          {/* Right side - chat panel */}
+          <div className="w-1/2 bg-white shadow-2xl flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+              <div className="flex items-center space-x-3">
+                <span className="text-3xl">🤖</span>
+                <div>
+                  <h3 className="font-bold text-lg">AI Food Assistant</h3>
+                  <p className="text-sm opacity-90">Complete ordering in chat!</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowChat(false)}
+                className="text-white hover:text-gray-200 text-3xl font-bold"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <ChatInterface onSelectRestaurant={handleChatSelectRestaurant} />
+            </div>
           </div>
         </div>
       )}

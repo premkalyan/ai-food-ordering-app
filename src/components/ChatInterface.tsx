@@ -20,6 +20,7 @@ interface ChatState {
   selectedRestaurant?: Restaurant;
   cart: OrderItem[];
   lastSearchResults?: Restaurant[];
+  lastOrderId?: string;
 }
 
 export function ChatInterface({}: ChatInterfaceProps) {
@@ -205,6 +206,7 @@ export function ChatInterface({}: ChatInterfaceProps) {
         stage: 'order_placed',
         cart: [],
         selectedRestaurant: undefined,
+        lastOrderId: order.id,
       });
 
       addMessage('assistant', confirmText);
@@ -323,6 +325,69 @@ export function ChatInterface({}: ChatInterfaceProps) {
         }
       }
 
+      // Handle track order command
+      if (userInput.toLowerCase().includes('track order') || userInput.toLowerCase().includes('track my order')) {
+        addMessage('user', userInput);
+        
+        if (chatState.lastOrderId) {
+          try {
+            const orderStatus = await api.trackOrder(chatState.lastOrderId);
+            
+            let trackText = `📦 **Order Status Update**\n\n`;
+            trackText += `Order ID: **${orderStatus.id}**\n`;
+            trackText += `Restaurant: ${orderStatus.restaurant_name}\n`;
+            trackText += `Status: **${orderStatus.status.toUpperCase()}**\n`;
+            trackText += `Estimated Delivery: ${orderStatus.estimated_delivery}\n\n`;
+            
+            // Status emoji
+            const statusEmoji: Record<string, string> = {
+              'pending': '⏳',
+              'confirmed': '✅',
+              'preparing': '🍳',
+              'ready': '📦',
+              'out_for_delivery': '🚗',
+              'delivered': '🎉',
+            };
+            
+            trackText += `${statusEmoji[orderStatus.status] || '📋'} `;
+            
+            const statusMessages: Record<string, string> = {
+              'pending': 'Order received, waiting for confirmation',
+              'confirmed': 'Restaurant confirmed your order',
+              'preparing': 'Your food is being prepared',
+              'ready': 'Food is ready for pickup',
+              'out_for_delivery': 'Driver is on the way!',
+              'delivered': 'Order delivered! Enjoy your meal!',
+            };
+            
+            trackText += statusMessages[orderStatus.status] || 'Processing your order';
+            trackText += `\n\nSay "track order" again for updates, or "start over" for a new order.`;
+            
+            addMessage('assistant', trackText);
+          } catch (error) {
+            addMessage('assistant', "Sorry, I couldn't track your order. Please try again.");
+          }
+        } else {
+          addMessage('assistant', "You don't have any recent orders. Place an order first!");
+        }
+        setLoading(false);
+        return;
+      }
+
+      // Handle start over command
+      if (userInput.toLowerCase().includes('start over') || userInput.toLowerCase().includes('new order')) {
+        addMessage('user', userInput);
+        setChatState({
+          stage: 'search',
+          cart: [],
+          selectedRestaurant: undefined,
+          lastOrderId: undefined,
+        });
+        addMessage('assistant', "Let's start fresh! What are you craving today?");
+        setLoading(false);
+        return;
+      }
+
       // Default: Intelligent search
       addMessage('user', userInput);
 
@@ -372,18 +437,7 @@ export function ChatInterface({}: ChatInterfaceProps) {
   ];
 
   return (
-    <div className="flex flex-col h-[600px] bg-white rounded-lg shadow-lg">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4 rounded-t-lg">
-        <div className="flex items-center space-x-3">
-          <span className="text-3xl">🤖</span>
-          <div>
-            <h3 className="font-bold text-lg">AI Food Assistant</h3>
-            <p className="text-sm opacity-90">Complete ordering in chat!</p>
-          </div>
-        </div>
-      </div>
-
+    <div className="flex flex-col h-full bg-white">
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (
