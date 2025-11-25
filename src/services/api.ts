@@ -135,5 +135,24 @@ export const api = {
     });
     return response.json();
   },
+
+  // Intelligent search
+  async intelligentSearch(query: string, location?: string): Promise<{
+    restaurants: Restaurant[];
+    suggested_items: MenuItem[];
+    query: string;
+    parsed: any;
+  }> {
+    const params = new URLSearchParams({ query });
+    if (location) params.append('location', location);
+    const response = await fetch(`${API_BASE_URL}/search/intelligent?${params}`);
+    return response.json();
+  },
+
+  // Track order
+  async trackOrder(orderId: string): Promise<Order> {
+    const response = await fetch(`${API_BASE_URL}/orders/${orderId}`);
+    return response.json();
+  },
 };
 

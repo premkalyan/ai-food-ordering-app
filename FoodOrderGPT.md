@@ -205,13 +205,13 @@ Order food naturally through ChatGPT - no app switching, no forms
 
 <div>
 
-### Phase 1: GPT Store (Now)
+### Phase 1: GPT Store (days/weeks)
 - Reach: 200M+ ChatGPT users
 - Discoverable in search
 - Free to publish
 - ChatGPT Plus required
 
-### Phase 2: MCP Registry (Q2-Q3 2025)
+### Phase 2: MCP Registry (weeks/months)
 - Automatic discovery
 - One-click enable
 - Default ChatGPT integration
@@ -238,7 +238,7 @@ Order food naturally through ChatGPT - no app switching, no forms
 
 ---
 
-## 12-Month Roadmap
+## 12-Month Roadmap (DRAFT)
 
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2em;">
 

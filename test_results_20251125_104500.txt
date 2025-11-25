@@ -1,0 +1,581 @@
+🧪 AI FOOD ORDERING API - COMPREHENSIVE TEST SUITE
+=================================================
+Started: Tue Nov 25 10:45:01 IST 2025
+API Base: https://ai-food-ordering-poc.vercel.app
+
+
+[1;33m═══════════════════════════════════════════════════════[0m
+[1;33mCATEGORY 1: BASIC ENDPOINTS[0m
+[1;33m═══════════════════════════════════════════════════════[0m
+
+[0;34mTest #1: Get All Cities[0m
+Endpoint: GET /api/v1/cities
+Status: 200
+Response Time: 0.330728s (.355685000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_1_response.json
+
+[0;34mTest #2: Get Cuisines for San Francisco[0m
+Endpoint: GET /api/v1/cuisines?city=San%20Francisco
+Status: 200
+Response Time: 0.332501s (.353019000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_2_response.json
+
+[0;34mTest #3: Get Cuisines for New York[0m
+Endpoint: GET /api/v1/cuisines?city=New%20York
+Status: 200
+Response Time: 0.302805s (.324934000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_3_response.json
+
+[0;34mTest #4: Get Cuisines for Chicago[0m
+Endpoint: GET /api/v1/cuisines?city=Chicago
+Status: 200
+Response Time: 0.309664s (.327419000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_4_response.json
+
+[0;34mTest #5: Get Cuisines for Los Angeles[0m
+Endpoint: GET /api/v1/cuisines?city=Los%20Angeles
+Status: 200
+Response Time: 0.301089s (.322815000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_5_response.json
+
+[0;34mTest #6: Get Cuisines for Bangalore[0m
+Endpoint: GET /api/v1/cuisines?city=Bangalore
+Status: 200
+Response Time: 0.321733s (.342412000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_6_response.json
+
+[1;33m═══════════════════════════════════════════════════════[0m
+[1;33mCATEGORY 2: RESTAURANT SEARCH - BY CITY[0m
+[1;33m═══════════════════════════════════════════════════════[0m
+
+[0;34mTest #7: Search Restaurants in San Francisco[0m
+Endpoint: GET /api/v1/restaurants/search?city=San%20Francisco
+Status: 200
+Response Time: 0.303268s (.325630000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_7_response.json
+
+[0;34mTest #8: Search Restaurants in New York[0m
+Endpoint: GET /api/v1/restaurants/search?city=New%20York
+Status: 200
+Response Time: 0.307742s (.330302000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_8_response.json
+
+[0;34mTest #9: Search Restaurants in Chicago[0m
+Endpoint: GET /api/v1/restaurants/search?city=Chicago
+Status: 200
+Response Time: 0.295205s (.314355000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_9_response.json
+
+[0;34mTest #10: Search Restaurants in Los Angeles[0m
+Endpoint: GET /api/v1/restaurants/search?city=Los%20Angeles
+Status: 200
+Response Time: 0.334569s (.359646000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_10_response.json
+
+[0;34mTest #11: Search Restaurants in Bangalore[0m
+Endpoint: GET /api/v1/restaurants/search?city=Bangalore
+Status: 200
+Response Time: 0.301224s (.325661000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_11_response.json
+
+[1;33m═══════════════════════════════════════════════════════[0m
+[1;33mCATEGORY 3: RESTAURANT SEARCH - BY CITY & CUISINE[0m
+[1;33m═══════════════════════════════════════════════════════[0m
+
+[0;34mTest #12: SF - Indian Restaurants[0m
+Endpoint: GET /api/v1/restaurants/search?city=San%20Francisco&cuisine=Indian
+Status: 200
+Response Time: 0.298383s (.321695000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_12_response.json
+
+[0;34mTest #13: SF - Chinese Restaurants[0m
+Endpoint: GET /api/v1/restaurants/search?city=San%20Francisco&cuisine=Chinese
+Status: 200
+Response Time: 0.299040s (.321678000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_13_response.json
+
+[0;34mTest #14: SF - Italian Restaurants[0m
+Endpoint: GET /api/v1/restaurants/search?city=San%20Francisco&cuisine=Italian
+Status: 200
+Response Time: 0.300264s (.325139000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_14_response.json
+
+[0;34mTest #15: SF - Japanese Restaurants[0m
+Endpoint: GET /api/v1/restaurants/search?city=San%20Francisco&cuisine=Japanese
+Status: 200
+Response Time: 0.296804s (.321723000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_15_response.json
+
+[0;34mTest #16: SF - Mexican Restaurants[0m
+Endpoint: GET /api/v1/restaurants/search?city=San%20Francisco&cuisine=Mexican
+Status: 200
+Response Time: 0.321629s (.348138000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_16_response.json
+
+[0;34mTest #17: SF - Thai Restaurants[0m
+Endpoint: GET /api/v1/restaurants/search?city=San%20Francisco&cuisine=Thai
+Status: 200
+Response Time: 0.325405s (.346322000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_17_response.json
+
+[0;34mTest #18: SF - Korean Restaurants[0m
+Endpoint: GET /api/v1/restaurants/search?city=San%20Francisco&cuisine=Korean
+Status: 200
+Response Time: 0.294542s (.311250000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_18_response.json
+
+[0;34mTest #19: SF - Mediterranean Restaurants[0m
+Endpoint: GET /api/v1/restaurants/search?city=San%20Francisco&cuisine=Mediterranean
+Status: 200
+Response Time: 0.297148s (.319290000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_19_response.json
+
+[0;34mTest #20: NYC - Indian Restaurants[0m
+Endpoint: GET /api/v1/restaurants/search?city=New%20York&cuisine=Indian
+Status: 200
+Response Time: 0.312812s (.334530000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_20_response.json
+
+[0;34mTest #21: Chicago - Mexican Restaurants[0m
+Endpoint: GET /api/v1/restaurants/search?city=Chicago&cuisine=Mexican
+Status: 200
+Response Time: 0.301158s (.319188000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_21_response.json
+
+[0;34mTest #22: LA - Japanese Restaurants[0m
+Endpoint: GET /api/v1/restaurants/search?city=Los%20Angeles&cuisine=Japanese
+Status: 200
+Response Time: 0.305120s (.325628000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_22_response.json
+
+[0;34mTest #23: Bangalore - Chinese Restaurants[0m
+Endpoint: GET /api/v1/restaurants/search?city=Bangalore&cuisine=Chinese
+Status: 200
+Response Time: 0.312972s (.338623000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_23_response.json
+
+[1;33m═══════════════════════════════════════════════════════[0m
+[1;33mCATEGORY 4: MENU RETRIEVAL[0m
+[1;33m═══════════════════════════════════════════════════════[0m
+
+[0;34mTest #24: Get Menu - Taj Palace (rest_001)[0m
+Endpoint: GET /api/v1/restaurants/rest_001/menu
+Status: 200
+Response Time: 0.303412s (.327613000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_24_response.json
+
+[0;34mTest #25: Get Menu - Manhattan Tandoor (rest_012)[0m
+Endpoint: GET /api/v1/restaurants/rest_012/menu
+Status: 200
+Response Time: 0.306783s (.334406000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_25_response.json
+
+[0;34mTest #26: Get Menu - Chicago Tandoor (rest_019)[0m
+Endpoint: GET /api/v1/restaurants/rest_019/menu
+Status: 200
+Response Time: 0.300117s (.325807000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_26_response.json
+
+[0;34mTest #27: Get Menu - Bollywood Bites LA (rest_032)[0m
+Endpoint: GET /api/v1/restaurants/rest_032/menu
+Status: 404
+Response Time: 0.297434s (.318761000s total)
+[0;31m❌ FAIL[0m - HTTP Status: 404
+Response Preview: ...
+Full response saved to: test_27_response.json
+
+[0;34mTest #28: Get Menu - Bangalore Wok (rest_020)[0m
+Endpoint: GET /api/v1/restaurants/rest_020/menu
+Status: 404
+Response Time: 0.306307s (.334023000s total)
+[0;31m❌ FAIL[0m - HTTP Status: 404
+Response Preview: ...
+Full response saved to: test_28_response.json
+
+[1;33m═══════════════════════════════════════════════════════[0m
+[1;33mCATEGORY 5: INTELLIGENT SEARCH - DISH QUERIES[0m
+[1;33m═══════════════════════════════════════════════════════[0m
+
+[0;34mTest #29: Intelligent: Chicken Tikka Masala[0m
+Endpoint: GET /api/v1/search/intelligent?query=Chicken%20Tikka%20Masala
+Status: 200
+Response Time: 0.302650s (.330277000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_29_response.json
+
+[0;34mTest #30: Intelligent: Chicken Tikka Masala in New York[0m
+Endpoint: GET /api/v1/search/intelligent?query=Chicken%20Tikka%20Masala%20in%20New%20York&location=New%20York
+Status: 200
+Response Time: 0.299452s (.330696000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_30_response.json
+
+[0;34mTest #31: Intelligent: Chicken Tikka Masala in Los Angeles[0m
+Endpoint: GET /api/v1/search/intelligent?query=Chicken%20Tikka%20Masala%20in%20Los%20Angeles&location=Los%20Angeles
+Status: 200
+Response Time: 0.295218s (.323970000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_31_response.json
+
+[0;34mTest #32: Intelligent: Pad Thai[0m
+Endpoint: GET /api/v1/search/intelligent?query=Pad%20Thai
+Status: 200
+Response Time: 0.297626s (.325874000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_32_response.json
+
+[0;34mTest #33: Intelligent: Sushi[0m
+Endpoint: GET /api/v1/search/intelligent?query=sushi
+Status: 200
+Response Time: 0.311219s (.339475000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_33_response.json
+
+[0;34mTest #34: Intelligent: Pizza[0m
+Endpoint: GET /api/v1/search/intelligent?query=pizza
+Status: 200
+Response Time: 0.298753s (.319950000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_34_response.json
+
+[0;34mTest #35: Intelligent: Tacos[0m
+Endpoint: GET /api/v1/search/intelligent?query=tacos
+Status: 200
+Response Time: 0.301140s (.334608000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_35_response.json
+
+[0;34mTest #36: Intelligent: Biryani[0m
+Endpoint: GET /api/v1/search/intelligent?query=biryani
+Status: 200
+Response Time: 0.296311s (.327890000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_36_response.json
+
+[0;34mTest #37: Intelligent: Dumplings[0m
+Endpoint: GET /api/v1/search/intelligent?query=dumplings
+Status: 200
+Response Time: 0.300055s (.332426000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_37_response.json
+
+[1;33m═══════════════════════════════════════════════════════[0m
+[1;33mCATEGORY 6: INTELLIGENT SEARCH - PRICE CONSTRAINTS[0m
+[1;33m═══════════════════════════════════════════════════════[0m
+
+[0;34mTest #38: Intelligent: Food under $10[0m
+Endpoint: GET /api/v1/search/intelligent?query=food%20under%20%2410
+Status: 200
+Response Time: 0.307590s (.330979000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_38_response.json
+
+[0;34mTest #39: Intelligent: Food under $15[0m
+Endpoint: GET /api/v1/search/intelligent?query=food%20under%20%2415
+Status: 200
+Response Time: 0.296462s (.324521000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_39_response.json
+
+[0;34mTest #40: Intelligent: Food under $20[0m
+Endpoint: GET /api/v1/search/intelligent?query=food%20under%20%2420
+Status: 200
+Response Time: 0.316917s (.349500000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_40_response.json
+
+[0;34mTest #41: Intelligent: Italian under $20[0m
+Endpoint: GET /api/v1/search/intelligent?query=Italian%20food%20under%20%2420
+Status: 200
+Response Time: 0.307419s (.337350000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_41_response.json
+
+[0;34mTest #42: Intelligent: Sushi under $15[0m
+Endpoint: GET /api/v1/search/intelligent?query=sushi%20under%20%2415
+Status: 200
+Response Time: 0.303147s (.332108000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_42_response.json
+
+[1;33m═══════════════════════════════════════════════════════[0m
+[1;33mCATEGORY 7: INTELLIGENT SEARCH - TIME CONSTRAINTS[0m
+[1;33m═══════════════════════════════════════════════════════[0m
+
+[0;34mTest #43: Intelligent: Food in 20 minutes[0m
+Endpoint: GET /api/v1/search/intelligent?query=food%20in%2020%20minutes
+Status: 200
+Response Time: 0.312048s (.334618000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_43_response.json
+
+[0;34mTest #44: Intelligent: Food in 30 minutes[0m
+Endpoint: GET /api/v1/search/intelligent?query=food%20in%2030%20minutes
+Status: 200
+Response Time: 0.292576s (.319548000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_44_response.json
+
+[0;34mTest #45: Intelligent: Fast delivery[0m
+Endpoint: GET /api/v1/search/intelligent?query=fast%20delivery
+Status: 200
+Response Time: 0.307088s (.334640000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_45_response.json
+
+[0;34mTest #46: Intelligent: Quick food[0m
+Endpoint: GET /api/v1/search/intelligent?query=quick%20food
+Status: 200
+Response Time: 0.306403s (.338124000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_46_response.json
+
+[0;34mTest #47: Intelligent: I'm hungry, need food fast[0m
+Endpoint: GET /api/v1/search/intelligent?query=I%27m%20hungry%2C%20need%20food%20fast
+Status: 200
+Response Time: 0.339587s (.364103000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_47_response.json
+
+[1;33m═══════════════════════════════════════════════════════[0m
+[1;33mCATEGORY 8: INTELLIGENT SEARCH - PREFERENCES[0m
+[1;33m═══════════════════════════════════════════════════════[0m
+
+[0;34mTest #48: Intelligent: Spicy food[0m
+Endpoint: GET /api/v1/search/intelligent?query=spicy%20food
+Status: 200
+Response Time: 0.300072s (.326583000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_48_response.json
+
+[0;34mTest #49: Intelligent: Vegetarian food[0m
+Endpoint: GET /api/v1/search/intelligent?query=vegetarian%20food
+Status: 200
+Response Time: 0.294906s (.322775000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_49_response.json
+
+[0;34mTest #50: Intelligent: Spicy vegetarian[0m
+Endpoint: GET /api/v1/search/intelligent?query=spicy%20vegetarian%20food
+Status: 200
+Response Time: 0.314054s (.341652000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_50_response.json
+
+[0;34mTest #51: Intelligent: Healthy food[0m
+Endpoint: GET /api/v1/search/intelligent?query=healthy%20food
+Status: 200
+Response Time: 0.310485s (.340788000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_51_response.json
+
+[1;33m═══════════════════════════════════════════════════════[0m
+[1;33mCATEGORY 9: INTELLIGENT SEARCH - COMPLEX QUERIES[0m
+[1;33m═══════════════════════════════════════════════════════[0m
+
+[0;34mTest #52: Intelligent: Spicy Indian under $20[0m
+Endpoint: GET /api/v1/search/intelligent?query=spicy%20Indian%20food%20under%20%2420
+Status: 200
+Response Time: 0.306054s (.333800000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_52_response.json
+
+[0;34mTest #53: Intelligent: Italian in 30 mins under $25[0m
+Endpoint: GET /api/v1/search/intelligent?query=Italian%20food%20in%2030%20minutes%20under%20%2425
+Status: 200
+Response Time: 0.296427s (.319630000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_53_response.json
+
+[0;34mTest #54: Intelligent: Vegetarian Thai fast[0m
+Endpoint: GET /api/v1/search/intelligent?query=vegetarian%20Thai%20food%20fast%20delivery
+Status: 200
+Response Time: 0.304175s (.329129000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_54_response.json
+
+[0;34mTest #55: Intelligent: Sushi in Bangalore under $20[0m
+Endpoint: GET /api/v1/search/intelligent?query=sushi%20in%20Bangalore%20under%20%2420&location=Bangalore
+Status: 200
+Response Time: 0.294905s (.316679000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_55_response.json
+
+[0;34mTest #56: Intelligent: Korean BBQ in Chicago[0m
+Endpoint: GET /api/v1/search/intelligent?query=Korean%20BBQ%20in%20Chicago&location=Chicago
+Status: 200
+Response Time: 0.296895s (.328750000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_56_response.json
+
+[1;33m═══════════════════════════════════════════════════════[0m
+[1;33mCATEGORY 10: INTELLIGENT SEARCH - EDGE CASES[0m
+[1;33m═══════════════════════════════════════════════════════[0m
+
+[0;34mTest #57: Intelligent: Empty query[0m
+Endpoint: GET /api/v1/search/intelligent?query=
+Status: 200
+Response Time: 0.298227s (.325866000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_57_response.json
+
+[0;34mTest #58: Intelligent: Ethiopian food (not available)[0m
+Endpoint: GET /api/v1/search/intelligent?query=Ethiopian%20food
+Status: 200
+Response Time: 0.309301s (.335558000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_58_response.json
+
+[0;34mTest #59: Intelligent: Food under $1 (too cheap)[0m
+Endpoint: GET /api/v1/search/intelligent?query=food%20under%20%241
+Status: 200
+Response Time: 0.301963s (.331095000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_59_response.json
+
+[0;34mTest #60: Intelligent: Delivery in 5 minutes (unrealistic)[0m
+Endpoint: GET /api/v1/search/intelligent?query=delivery%20in%205%20minutes
+Status: 200
+Response Time: 0.297163s (.328436000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_60_response.json
+
+[0;34mTest #61: Intelligent: French cuisine (not available)[0m
+Endpoint: GET /api/v1/search/intelligent?query=French%20cuisine
+Status: 200
+Response Time: 0.309859s (.342888000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_61_response.json
+
+[1;33m═══════════════════════════════════════════════════════[0m
+[1;33mCATEGORY 11: ORDER CREATION (POST)[0m
+[1;33m═══════════════════════════════════════════════════════[0m
+
+[0;34mTest #62: Create Order - Chicken Tikka Masala[0m
+Endpoint: POST /api/v1/orders/create
+Status: 200
+Response Time: 0.308066s (.337867000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_62_response.json
+
+[0;34mTest #63: Create Order - Multiple Items[0m
+Endpoint: POST /api/v1/orders/create
+Status: 200
+Response Time: 0.297629s (.324881000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_63_response.json
+
+[0;34mTest #64: Create Order - Chicago Deep Dish[0m
+Endpoint: POST /api/v1/orders/create
+Status: 200
+Response Time: 0.295877s (.323567000s total)
+[0;31m❌ FAIL[0m - Invalid JSON response
+Response Preview: ...
+Full response saved to: test_64_response.json
+
+[1;33m═══════════════════════════════════════════════════════[0m
+[1;33mTEST SUMMARY[0m
+[1;33m═══════════════════════════════════════════════════════[0m
+
+Total Tests: 64
+[0;32mPassed: 0[0m
+[0;31mFailed: 64[0m
+
+[0;31m⚠️  SOME TESTS FAILED[0m
+
+Completed: Tue Nov 25 10:45:32 IST 2025
+Results saved to: test_results_20251125_104500.txt
+
+
+[1;33m═══════════════════════════════════════════════════════[0m
+[1;33mRESPONSE TIME ANALYSIS[0m
+[1;33m═══════════════════════════════════════════════════════[0m
+
+✅ Test suite complete!

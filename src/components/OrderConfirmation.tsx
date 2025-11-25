@@ -3,9 +3,10 @@ import { Order } from '../services/api';
 interface OrderConfirmationProps {
   order: Order;
   onStartNew: () => void;
+  onTrackOrder?: () => void;
 }
 
-export function OrderConfirmation({ order, onStartNew }: OrderConfirmationProps) {
+export function OrderConfirmation({ order, onStartNew, onTrackOrder }: OrderConfirmationProps) {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="text-center mb-8">
@@ -95,8 +96,13 @@ export function OrderConfirmation({ order, onStartNew }: OrderConfirmationProps)
         </div>
       </div>
 
-      <div className="text-center">
-        <button onClick={onStartNew} className="btn btn-primary text-lg px-8">
+      <div className="text-center space-x-4">
+        {onTrackOrder && (
+          <button onClick={onTrackOrder} className="btn btn-primary text-lg px-8">
+            📍 Track Order
+          </button>
+        )}
+        <button onClick={onStartNew} className="btn btn-secondary text-lg px-8">
           Order Again
         </button>
       </div>

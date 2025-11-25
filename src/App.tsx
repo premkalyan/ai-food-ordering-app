@@ -6,6 +6,8 @@ import { MenuView } from './components/MenuView';
 import { Cart } from './components/Cart';
 import { Checkout } from './components/Checkout';
 import { OrderConfirmation } from './components/OrderConfirmation';
+import { OrderTracking } from './components/OrderTracking';
+import { ChatInterface } from './components/ChatInterface';
 import { Restaurant, MenuItem, OrderItem, Order } from './services/api';
 
 type AppState = 
@@ -14,11 +16,14 @@ type AppState =
   | { screen: 'restaurants'; city: string; cuisine: string }
   | { screen: 'menu'; city: string; cuisine: string; restaurant: Restaurant }
   | { screen: 'checkout'; city: string; cuisine: string; restaurant: Restaurant }
-  | { screen: 'confirmation'; order: Order };
+  | { screen: 'confirmation'; order: Order }
+  | { screen: 'tracking'; order: Order }
+  | { screen: 'chat' };
 
 function App() {
   const [state, setState] = useState<AppState>({ screen: 'city' });
   const [cart, setCart] = useState<OrderItem[]>([]);
+  const [showChat, setShowChat] = useState(false);
 
   const handleAddToCart = (item: MenuItem) => {
     const existingItem = cart.find((cartItem) => cartItem.item_id === item.id);
@@ -65,8 +70,44 @@ function App() {
     setCart([]);
   };
 
+  const handleChatSelectRestaurant = (restaurant: Restaurant) => {
+    setShowChat(false);
+    setState({
+      screen: 'menu',
+      city: restaurant.location.city,
+      cuisine: restaurant.cuisine,
+      restaurant,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
+      {/* Floating Chat Button */}
+      {!showChat && state.screen !== 'chat' && (
+        <button
+          onClick={() => setShowChat(true)}
+          className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center text-2xl hover:scale-110"
+          title="Chat with AI Assistant"
+        >
+          💬
+        </button>
+      )}
+
+      {/* Chat Modal */}
+      {showChat && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+          <div className="relative w-full max-w-2xl">
+            <button
+              onClick={() => setShowChat(false)}
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 text-3xl"
+            >
+              ✕
+            </button>
+            <ChatInterface onSelectRestaurant={handleChatSelectRestaurant} />
+          </div>
+        </div>
+      )}
+
       {state.screen === 'city' && (
         <CitySelector
           onSelectCity={(city) => setState({ screen: 'cuisine', city })}
@@ -143,7 +184,15 @@ function App() {
       )}
 
       {state.screen === 'confirmation' && (
-        <OrderConfirmation order={state.order} onStartNew={handleStartNew} />
+        <OrderConfirmation 
+          order={state.order} 
+          onStartNew={handleStartNew}
+          onTrackOrder={() => setState({ screen: 'tracking', order: state.order })}
+        />
+      )}
+
+      {state.screen === 'tracking' && (
+        <OrderTracking order={state.order} onStartNew={handleStartNew} />
       )}
     </div>
   );
