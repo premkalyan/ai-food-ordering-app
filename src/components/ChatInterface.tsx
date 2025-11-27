@@ -32,8 +32,8 @@ interface ChatState {
 }
 
 interface Favorites {
-  restaurants: string[]; // Restaurant IDs
-  dishes: string[]; // Menu item IDs
+  restaurants: Restaurant[]; // Full restaurant objects
+  dishes: MenuItem[]; // Full menu item objects
 }
 
 export function ChatInterface({}: ChatInterfaceProps) {
@@ -54,7 +54,16 @@ export function ChatInterface({}: ChatInterfaceProps) {
   const [favorites, setFavorites] = useState<Favorites>(() => {
     // Load from localStorage
     const saved = localStorage.getItem('favorites');
-    return saved ? JSON.parse(saved) : { restaurants: [], dishes: [] };
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Handle old format (IDs) vs new format (objects)
+      if (parsed.restaurants?.length > 0 && typeof parsed.restaurants[0] === 'string') {
+        // Old format - clear it
+        return { restaurants: [], dishes: [] };
+      }
+      return parsed;
+    }
+    return { restaurants: [], dishes: [] };
   });
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -204,18 +213,18 @@ export function ChatInterface({}: ChatInterfaceProps) {
         break;
       case 'toggle_favorite_restaurant':
         const restaurant = data;
-        const isFavorited = favorites.restaurants.includes(restaurant.id);
+        const isFavorited = favorites.restaurants.some(r => r.id === restaurant.id);
         
         if (isFavorited) {
           setFavorites(prev => ({
             ...prev,
-            restaurants: prev.restaurants.filter(id => id !== restaurant.id),
+            restaurants: prev.restaurants.filter(r => r.id !== restaurant.id),
           }));
           // Just update favorites, don't add messages - keep the flow
         } else {
           setFavorites(prev => ({
             ...prev,
-            restaurants: [...prev.restaurants, restaurant.id],
+            restaurants: [...prev.restaurants, restaurant],
           }));
           // Just update favorites, don't add messages - keep the flow
         }
@@ -224,18 +233,18 @@ export function ChatInterface({}: ChatInterfaceProps) {
       
       case 'toggle_favorite_dish':
         const dish = data;
-        const isDishFavorited = favorites.dishes.includes(dish.id);
+        const isDishFavorited = favorites.dishes.some(d => d.id === dish.id);
         
         if (isDishFavorited) {
           setFavorites(prev => ({
             ...prev,
-            dishes: prev.dishes.filter(id => id !== dish.id),
+            dishes: prev.dishes.filter(d => d.id !== dish.id),
           }));
           // Just update favorites, don't add messages - keep the flow
         } else {
           setFavorites(prev => ({
             ...prev,
-            dishes: [...prev.dishes, dish.id],
+            dishes: [...prev.dishes, dish],
           }));
           // Just update favorites, don't add messages - keep the flow
         }
@@ -256,38 +265,48 @@ export function ChatInterface({}: ChatInterfaceProps) {
           
           addMessage('assistant', "You don't have any favorites yet! ⭐\n\nClick the ⭐ button next to restaurants or dishes to add them to your favorites.\n\nOr start ordering now:", { buttons: emptyButtons });
         } else {
-          // We need to fetch actual details - for now show what we have
-          // In a real app, we'd fetch from API
           let favText = `⭐ **Your Favorites** (${favorites.restaurants.length + favorites.dishes.length} items)\n\n`;
           
           const favButtons: MessageButton[] = [];
           
           if (favorites.restaurants.length > 0) {
             favText += `**Favorite Restaurants:**\n`;
-            // Note: In production, fetch actual restaurant details from API
-            favorites.restaurants.forEach((id, idx) => {
-              favText += `${idx + 1}. ${id}\n`;
+            favorites.restaurants.forEach((restaurant, idx) => {
+              favText += `${idx + 1}. **${restaurant.name}** (${restaurant.cuisine})\n`;
+              favText += `   ⭐ ${restaurant.rating} stars | 🕒 ${restaurant.delivery_time} | 💰 ${restaurant.price_range}\n`;
+              favText += `   📍 ${restaurant.location.city}\n\n`;
+              
+              // Add button to order from this restaurant
+              favButtons.push({
+                label: `Order from ${restaurant.name}`,
+                action: 'select_restaurant',
+                data: restaurant,
+                variant: 'primary' as const,
+              });
             });
-            favText += '\n';
           }
           
           if (favorites.dishes.length > 0) {
             favText += `**Favorite Dishes:**\n`;
-            // Note: In production, fetch actual dish details from API
-            favorites.dishes.forEach((id, idx) => {
-              favText += `${idx + 1}. ${id}\n`;
+            favorites.dishes.forEach((dish, idx) => {
+              const tags = [];
+              if (dish.vegetarian) tags.push('🥬');
+              if (dish.spicy) tags.push('🌶️');
+              if (dish.popular) tags.push('⭐');
+              
+              favText += `${idx + 1}. **${dish.name}** - $${dish.price} ${tags.join(' ')}\n`;
+              favText += `   ${dish.description}\n\n`;
             });
-            favText += '\n';
           }
           
-          favText += 'Start a new search to order:';
+          favText += '\n**Quick Search:**';
           
-          // Always provide action buttons
+          // Always provide quick search buttons
           favButtons.push(
-            { label: 'Chicken Tikka Masala in New York', action: 'quick_search', data: 'Chicken Tikka Masala in New York', variant: 'primary' as const },
-            { label: 'Italian food under $20', action: 'quick_search', data: 'Italian food under $20', variant: 'primary' as const },
-            { label: 'Sushi in Los Angeles', action: 'quick_search', data: 'Sushi in Los Angeles', variant: 'primary' as const },
-            { label: 'Spicy food in 30 minutes', action: 'quick_search', data: 'Spicy food in 30 minutes', variant: 'primary' as const },
+            { label: 'Chicken Tikka Masala in New York', action: 'quick_search', data: 'Chicken Tikka Masala in New York', variant: 'secondary' as const },
+            { label: 'Italian food under $20', action: 'quick_search', data: 'Italian food under $20', variant: 'secondary' as const },
+            { label: 'Sushi in Los Angeles', action: 'quick_search', data: 'Sushi in Los Angeles', variant: 'secondary' as const },
+            { label: 'Spicy food in 30 minutes', action: 'quick_search', data: 'Spicy food in 30 minutes', variant: 'secondary' as const },
           );
           
           addMessage('assistant', favText, { buttons: favButtons });
@@ -317,7 +336,7 @@ export function ChatInterface({}: ChatInterfaceProps) {
             const restaurantButtons: MessageButton[] = [];
             
             result.restaurants.slice(0, 5).forEach((restaurant, index) => {
-              const isFav = favorites.restaurants.includes(restaurant.id);
+              const isFav = favorites.restaurants.some(r => r.id === restaurant.id);
               
               restaurantButtons.push({
                 label: `${index + 1}. ${restaurant.name}`,
@@ -434,7 +453,7 @@ export function ChatInterface({}: ChatInterfaceProps) {
         if (item.vegetarian) tags.push('🥬');
         if (item.spicy) tags.push('🌶️');
         if (item.popular) tags.push('⭐');
-        const isFav = favorites.dishes.includes(item.id);
+        const isFav = favorites.dishes.some(d => d.id === item.id);
         
         // Single button with inline favorite star
         const favStar = isFav ? '⭐ ' : '☆ ';
@@ -785,7 +804,7 @@ export function ChatInterface({}: ChatInterfaceProps) {
         const restaurantButtons: MessageButton[] = [];
         
         result.restaurants.slice(0, 5).forEach((restaurant, index) => {
-          const isFav = favorites.restaurants.includes(restaurant.id);
+          const isFav = favorites.restaurants.some(r => r.id === restaurant.id);
           
           // Main restaurant button
           restaurantButtons.push({
@@ -976,7 +995,7 @@ export function ChatInterface({}: ChatInterfaceProps) {
                       const restaurantButtons: MessageButton[] = [];
                       
                       result.restaurants.slice(0, 5).forEach((restaurant, index) => {
-                        const isFav = favorites.restaurants.includes(restaurant.id);
+                        const isFav = favorites.restaurants.some(r => r.id === restaurant.id);
                         
                         // Main restaurant button
                         restaurantButtons.push({
