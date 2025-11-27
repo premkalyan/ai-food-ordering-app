@@ -355,6 +355,13 @@ export function ChatInterface({}: ChatInterfaceProps) {
         }
         break;
       
+      case 'clear_cart':
+        userMessage = 'Clear my cart';
+        addMessage('user', userMessage);
+        setChatState(prev => ({ ...prev, cart: [] }));
+        addMessage('assistant', '🗑️ Cart cleared! Start fresh with a new order.');
+        break;
+      
       case 'continue_shopping':
         // Just show the menu again
         if (chatState.selectedRestaurant) {
@@ -419,7 +426,7 @@ export function ChatInterface({}: ChatInterfaceProps) {
       // Flatten menu items for easy lookup
       const allItems = menuData.categories.flatMap(cat => cat.items);
 
-      // Create buttons for each menu item
+      // Create buttons for each menu item (inline favorite)
       const menuButtons: MessageButton[] = [];
       
       allItems.forEach((item, idx) => {
@@ -429,18 +436,11 @@ export function ChatInterface({}: ChatInterfaceProps) {
         if (item.popular) tags.push('⭐');
         const isFav = favorites.dishes.includes(item.id);
         
-        // Add to cart button
+        // Single button with inline favorite star
+        const favStar = isFav ? '⭐ ' : '☆ ';
         menuButtons.push({
-          label: `${idx + 1}. ${item.name} ($${item.price}) ${tags.join(' ')}`,
+          label: `${favStar}${idx + 1}. ${item.name} ($${item.price}) ${tags.join(' ')}`,
           action: 'add_item',
-          data: item,
-          variant: 'secondary' as const,
-        });
-        
-        // Favorite toggle button (smaller, inline)
-        menuButtons.push({
-          label: isFav ? '⭐' : '☆',
-          action: 'toggle_favorite_dish',
           data: item,
           variant: 'secondary' as const,
         });
@@ -876,6 +876,35 @@ export function ChatInterface({}: ChatInterfaceProps) {
                       danger: 'bg-red-600 hover:bg-red-700 text-white',
                     };
                     
+                    // Check if this is a menu item button (has star at start)
+                    const isMenuItem = button.label.startsWith('⭐') || button.label.startsWith('☆');
+                    const isFavorited = button.label.startsWith('⭐');
+                    
+                    if (isMenuItem) {
+                      // Menu item with inline favorite toggle
+                      return (
+                        <div key={btnIdx} className="flex gap-2">
+                          <button
+                            onClick={() => handleButtonClick(button.action, button.data)}
+                            disabled={loading}
+                            className={`flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left ${
+                              variantStyles[button.variant || 'secondary']
+                            }`}
+                          >
+                            {button.label.substring(2)} {/* Remove star from label */}
+                          </button>
+                          <button
+                            onClick={() => handleButtonClick('toggle_favorite_dish', button.data)}
+                            disabled={loading}
+                            className="px-3 py-2 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+                            title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+                          >
+                            {isFavorited ? '⭐' : '☆'}
+                          </button>
+                        </div>
+                      );
+                    }
+                    
                     return (
                       <button
                         key={btnIdx}
@@ -996,10 +1025,41 @@ export function ChatInterface({}: ChatInterfaceProps) {
         </div>
       )}
 
-      {/* Quick Actions Bar */}
+      {/* Quick Actions Bar - Always visible */}
       <div className="px-4 py-3 border-t border-gray-200 bg-gray-50">
         <p className="text-xs text-gray-600 mb-2 font-medium">Quick Actions:</p>
         <div className="flex flex-wrap gap-2">
+          {/* Always show cart actions */}
+          <button
+            onClick={() => handleButtonClick('show_cart')}
+            disabled={loading}
+            className="px-3 py-1.5 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
+          >
+            <span>🛒</span>
+            <span>View Cart ({chatState.cart.length})</span>
+          </button>
+          
+          {chatState.cart.length > 0 && (
+            <>
+              <button
+                onClick={() => handleButtonClick('checkout')}
+                disabled={loading}
+                className="px-3 py-1.5 bg-orange-100 hover:bg-orange-200 text-orange-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
+              >
+                <span>✅</span>
+                <span>Checkout</span>
+              </button>
+              <button
+                onClick={() => handleButtonClick('clear_cart')}
+                disabled={loading}
+                className="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
+              >
+                <span>🗑️</span>
+                <span>Clear Cart</span>
+              </button>
+            </>
+          )}
+          
           {chatState.lastOrderId && (
             <button
               onClick={() => handleButtonClick('track_order')}
@@ -1010,26 +1070,7 @@ export function ChatInterface({}: ChatInterfaceProps) {
               <span>Track Order</span>
             </button>
           )}
-          {chatState.cart.length > 0 && (
-            <button
-              onClick={() => handleButtonClick('show_cart')}
-              disabled={loading}
-              className="px-3 py-1.5 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
-            >
-              <span>🛒</span>
-              <span>View Cart ({chatState.cart.length})</span>
-            </button>
-          )}
-          {chatState.stage !== 'search' && (
-            <button
-              onClick={() => handleButtonClick('start_over')}
-              disabled={loading}
-              className="px-3 py-1.5 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
-            >
-              <span>🆕</span>
-              <span>Start Over</span>
-            </button>
-          )}
+          
           <button
             onClick={() => handleButtonClick('show_favorites')}
             disabled={loading}
@@ -1038,14 +1079,15 @@ export function ChatInterface({}: ChatInterfaceProps) {
             <span>⭐</span>
             <span>My Favorites ({favorites.restaurants.length + favorites.dishes.length})</span>
           </button>
-          {chatState.selectedRestaurant && chatState.stage === 'adding_items' && (
+          
+          {chatState.stage !== 'search' && (
             <button
-              onClick={() => handleButtonClick('checkout')}
-              disabled={loading || chatState.cart.length === 0}
-              className="px-3 py-1.5 bg-orange-100 hover:bg-orange-200 text-orange-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
+              onClick={() => handleButtonClick('start_over')}
+              disabled={loading}
+              className="px-3 py-1.5 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
             >
-              <span>✅</span>
-              <span>Checkout</span>
+              <span>🆕</span>
+              <span>Start Over</span>
             </button>
           )}
         </div>
