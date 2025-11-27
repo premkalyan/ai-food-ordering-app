@@ -211,16 +211,15 @@ export function ChatInterface({}: ChatInterfaceProps) {
             ...prev,
             restaurants: prev.restaurants.filter(id => id !== restaurant.id),
           }));
-          addMessage('user', `Remove ${restaurant.name} from favorites`);
-          addMessage('assistant', `💔 Removed ${restaurant.name} from your favorites.`);
+          // Just update favorites, don't add messages - keep the flow
         } else {
           setFavorites(prev => ({
             ...prev,
             restaurants: [...prev.restaurants, restaurant.id],
           }));
-          addMessage('user', `Add ${restaurant.name} to favorites`);
-          addMessage('assistant', `⭐ Added ${restaurant.name} to your favorites!`);
+          // Just update favorites, don't add messages - keep the flow
         }
+        // Don't break the flow - user can continue selecting
         break;
       
       case 'toggle_favorite_dish':
@@ -232,16 +231,15 @@ export function ChatInterface({}: ChatInterfaceProps) {
             ...prev,
             dishes: prev.dishes.filter(id => id !== dish.id),
           }));
-          addMessage('user', `Remove ${dish.name} from favorites`);
-          addMessage('assistant', `💔 Removed ${dish.name} from your favorites.`);
+          // Just update favorites, don't add messages - keep the flow
         } else {
           setFavorites(prev => ({
             ...prev,
             dishes: [...prev.dishes, dish.id],
           }));
-          addMessage('user', `Add ${dish.name} to favorites`);
-          addMessage('assistant', `⭐ Added ${dish.name} to your favorites!`);
+          // Just update favorites, don't add messages - keep the flow
         }
+        // Don't break the flow - user can continue ordering
         break;
       
       case 'show_favorites':
@@ -713,9 +711,9 @@ export function ChatInterface({}: ChatInterfaceProps) {
             variant: 'primary' as const,
           });
           
-          // Favorite toggle button
+          // Favorite toggle button (inline star)
           restaurantButtons.push({
-            label: isFav ? '⭐ Favorited' : '☆ Add to Favorites',
+            label: isFav ? '⭐ Favorited' : '☆ Favorite',
             action: 'toggle_favorite_restaurant',
             data: restaurant,
             variant: 'secondary' as const,
@@ -773,7 +771,15 @@ export function ChatInterface({}: ChatInterfaceProps) {
                   : 'bg-gray-100 text-gray-900'
               }`}
             >
-              <div className="whitespace-pre-wrap">{message.content}</div>
+              {/* Message content with markdown-like formatting */}
+              <div 
+                className="whitespace-pre-wrap"
+                dangerouslySetInnerHTML={{
+                  __html: message.content
+                    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n/g, '<br/>')
+                }}
+              />
 
               {/* Buttons */}
               {message.buttons && message.buttons.length > 0 && (
@@ -824,7 +830,7 @@ export function ChatInterface({}: ChatInterfaceProps) {
       </div>
 
       {/* Quick Prompts */}
-      {messages.length === 1 && (
+      {(messages.length === 1 || (messages.length > 1 && messages[messages.length - 1].content.includes("Let's start fresh"))) && (
         <div className="px-4 py-2 border-t border-gray-200">
           <p className="text-xs text-gray-600 mb-2">Try these:</p>
           <div className="flex flex-wrap gap-2">
