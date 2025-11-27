@@ -831,8 +831,73 @@ export function ChatInterface({}: ChatInterfaceProps) {
             {quickPrompts.map((prompt, index) => (
               <button
                 key={index}
-                onClick={() => setInput(prompt)}
-                className="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-700 transition-colors"
+                onClick={async () => {
+                  if (loading) return;
+                  
+                  // Add user message
+                  addMessage('user', prompt);
+                  setLoading(true);
+
+                  try {
+                    // Call intelligent search API
+                    const result = await api.intelligentSearch(prompt);
+
+                    if (result.restaurants && result.restaurants.length > 0) {
+                      let responseContent = `I found ${result.restaurants.length} restaurant${result.restaurants.length > 1 ? 's' : ''} matching your request:\n\n`;
+                      
+                      result.restaurants.slice(0, 5).forEach((restaurant, index) => {
+                        responseContent += `**${index + 1}. ${restaurant.name}** (${restaurant.cuisine})\n`;
+                        responseContent += `   ⭐ ${restaurant.rating} stars | 🕒 ${restaurant.delivery_time} | 💰 ${restaurant.price_range}\n`;
+                        responseContent += `   📍 ${restaurant.location.city}\n\n`;
+                      });
+
+                      responseContent += `\nClick a button below to view the menu:`;
+
+                      // Create buttons for each restaurant
+                      const restaurantButtons: MessageButton[] = [];
+                      
+                      result.restaurants.slice(0, 5).forEach((restaurant, index) => {
+                        const isFav = favorites.restaurants.includes(restaurant.id);
+                        
+                        // Main restaurant button
+                        restaurantButtons.push({
+                          label: `${index + 1}. ${restaurant.name}`,
+                          action: 'select_restaurant',
+                          data: restaurant,
+                          variant: 'primary' as const,
+                        });
+                        
+                        // Favorite toggle button
+                        restaurantButtons.push({
+                          label: isFav ? '⭐ Favorited' : '☆ Add to Favorites',
+                          action: 'toggle_favorite_restaurant',
+                          data: restaurant,
+                          variant: 'secondary' as const,
+                        });
+                      });
+
+                      setChatState({
+                        stage: 'search',
+                        cart: [],
+                        lastSearchResults: result.restaurants,
+                      });
+
+                      addMessage('assistant', responseContent, { 
+                        restaurants: result.restaurants,
+                        buttons: restaurantButtons,
+                      });
+                    } else {
+                      addMessage('assistant', `I couldn't find restaurants matching your criteria. Try:\n\n• Adjusting your budget\n• Different cuisine\n• Longer delivery time\n\nWhat else can I help you find?`);
+                    }
+                  } catch (error) {
+                    console.error('Search failed:', error);
+                    addMessage('assistant', "Sorry, I encountered an error. Please try again.");
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                disabled={loading}
+                className="text-xs px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium rounded-full transition-colors disabled:opacity-50"
               >
                 {prompt}
               </button>
