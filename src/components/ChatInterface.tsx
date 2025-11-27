@@ -247,27 +247,111 @@ export function ChatInterface({}: ChatInterfaceProps) {
         addMessage('user', userMessage);
         
         if (favorites.restaurants.length === 0 && favorites.dishes.length === 0) {
-          addMessage('assistant', "You don't have any favorites yet! ⭐\n\nClick the ⭐ button next to restaurants or dishes to add them to your favorites.");
+          const emptyButtons: MessageButton[] = [
+            { label: 'Chicken Tikka Masala in New York', action: 'quick_search', data: 'Chicken Tikka Masala in New York', variant: 'primary' as const },
+            { label: 'Italian food under $20', action: 'quick_search', data: 'Italian food under $20', variant: 'primary' as const },
+            { label: 'Sushi in Los Angeles', action: 'quick_search', data: 'Sushi in Los Angeles', variant: 'primary' as const },
+            { label: 'Spicy food in 30 minutes', action: 'quick_search', data: 'Spicy food in 30 minutes', variant: 'primary' as const },
+          ];
+          
+          addMessage('assistant', "You don't have any favorites yet! ⭐\n\nClick the ⭐ button next to restaurants or dishes to add them to your favorites.\n\nOr start ordering now:", { buttons: emptyButtons });
         } else {
+          // We need to fetch actual details - for now show what we have
+          // In a real app, we'd fetch from API
           let favText = `⭐ **Your Favorites** (${favorites.restaurants.length + favorites.dishes.length} items)\n\n`;
+          
+          const favButtons: MessageButton[] = [];
           
           if (favorites.restaurants.length > 0) {
             favText += `**Favorite Restaurants:**\n`;
+            // Note: In production, fetch actual restaurant details from API
             favorites.restaurants.forEach((id, idx) => {
-              favText += `${idx + 1}. Restaurant ID: ${id}\n`;
+              favText += `${idx + 1}. ${id}\n`;
             });
             favText += '\n';
           }
           
           if (favorites.dishes.length > 0) {
             favText += `**Favorite Dishes:**\n`;
+            // Note: In production, fetch actual dish details from API
             favorites.dishes.forEach((id, idx) => {
-              favText += `${idx + 1}. Dish ID: ${id}\n`;
+              favText += `${idx + 1}. ${id}\n`;
             });
+            favText += '\n';
           }
           
-          favText += '\nStart a new search to order from your favorites!';
-          addMessage('assistant', favText);
+          favText += 'Start a new search to order:';
+          
+          // Always provide action buttons
+          favButtons.push(
+            { label: 'Chicken Tikka Masala in New York', action: 'quick_search', data: 'Chicken Tikka Masala in New York', variant: 'primary' as const },
+            { label: 'Italian food under $20', action: 'quick_search', data: 'Italian food under $20', variant: 'primary' as const },
+            { label: 'Sushi in Los Angeles', action: 'quick_search', data: 'Sushi in Los Angeles', variant: 'primary' as const },
+            { label: 'Spicy food in 30 minutes', action: 'quick_search', data: 'Spicy food in 30 minutes', variant: 'primary' as const },
+          );
+          
+          addMessage('assistant', favText, { buttons: favButtons });
+        }
+        break;
+      
+      case 'quick_search':
+        // Handle quick search from favorites or anywhere
+        const query = data;
+        addMessage('user', query);
+        setLoading(true);
+
+        try {
+          const result = await api.intelligentSearch(query);
+
+          if (result.restaurants && result.restaurants.length > 0) {
+            let responseContent = `I found ${result.restaurants.length} restaurant${result.restaurants.length > 1 ? 's' : ''} matching your request:\n\n`;
+            
+            result.restaurants.slice(0, 5).forEach((restaurant, index) => {
+              responseContent += `**${index + 1}. ${restaurant.name}** (${restaurant.cuisine})\n`;
+              responseContent += `   ⭐ ${restaurant.rating} stars | 🕒 ${restaurant.delivery_time} | 💰 ${restaurant.price_range}\n`;
+              responseContent += `   📍 ${restaurant.location.city}\n\n`;
+            });
+
+            responseContent += `\nClick a button below to view the menu:`;
+
+            const restaurantButtons: MessageButton[] = [];
+            
+            result.restaurants.slice(0, 5).forEach((restaurant, index) => {
+              const isFav = favorites.restaurants.includes(restaurant.id);
+              
+              restaurantButtons.push({
+                label: `${index + 1}. ${restaurant.name}`,
+                action: 'select_restaurant',
+                data: restaurant,
+                variant: 'primary' as const,
+              });
+              
+              restaurantButtons.push({
+                label: isFav ? '⭐ Favorited' : '☆ Favorite',
+                action: 'toggle_favorite_restaurant',
+                data: restaurant,
+                variant: 'secondary' as const,
+              });
+            });
+
+            setChatState({
+              stage: 'search',
+              cart: [],
+              lastSearchResults: result.restaurants,
+            });
+
+            addMessage('assistant', responseContent, { 
+              restaurants: result.restaurants,
+              buttons: restaurantButtons,
+            });
+          } else {
+            addMessage('assistant', `I couldn't find restaurants matching your criteria. Try:\n\n• Adjusting your budget\n• Different cuisine\n• Longer delivery time\n\nWhat else can I help you find?`);
+          }
+        } catch (error) {
+          console.error('Search failed:', error);
+          addMessage('assistant', "Sorry, I encountered an error. Please try again.");
+        } finally {
+          setLoading(false);
         }
         break;
       
