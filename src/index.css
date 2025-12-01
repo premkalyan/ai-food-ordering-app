@@ -12,7 +12,17 @@ body.embed-mode {
 body.embed-mode #root {
   height: 100vh;
   max-height: 600px;
-  overflow-y: auto;
+  overflow: hidden; /* Changed from overflow-y: auto */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure chat interface fills embed properly */
+body.embed-mode .embed-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
 }
 
 /* Rest of existing styles... */

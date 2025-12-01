@@ -99,12 +99,12 @@ function App() {
     <div className="min-h-screen bg-gray-50 pb-32">
       {/* Embed mode - Show only chat interface */}
       {embedMode ? (
-        <div className="h-screen bg-white">
-          <div className="max-w-4xl mx-auto h-full">
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4 text-center">
-              <h1 className="text-xl font-bold">🍽️ AI Food Ordering</h1>
-              <p className="text-sm opacity-90">Order food with interactive chat!</p>
-            </div>
+        <div className="embed-container h-screen bg-white flex flex-col">
+          <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-3 text-center flex-shrink-0">
+            <h1 className="text-lg font-bold">🍽️ AI Food Ordering</h1>
+            <p className="text-xs opacity-90">Order food with interactive chat!</p>
+          </div>
+          <div className="flex-1 overflow-hidden">
             <ChatInterface onSelectRestaurant={handleChatSelectRestaurant} />
           </div>
         </div>
