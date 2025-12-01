@@ -1,0 +1,386 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AI Food Ordering API",
+    "description": "API for intelligent food ordering with restaurant search, menu browsing, and order placement",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://ai-food-ordering-poc.vercel.app/api/v1",
+      "description": "Production API"
+    }
+  ],
+  "paths": {
+    "/cities": {
+      "get": {
+        "operationId": "getCities",
+        "summary": "Get available cities",
+        "description": "Returns list of cities where food delivery is available",
+        "responses": {
+          "200": {
+            "description": "List of cities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cities": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cuisines": {
+      "get": {
+        "operationId": "getCuisines",
+        "summary": "Get available cuisines",
+        "description": "Returns list of cuisines available in a specific city",
+        "parameters": [
+          {
+            "name": "city",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "City name (e.g., 'San Francisco', 'New York')"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of cuisines",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cuisines": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/restaurants/search": {
+      "get": {
+        "operationId": "searchRestaurants",
+        "summary": "Search restaurants by city and cuisine",
+        "description": "Returns restaurants matching city and cuisine filters",
+        "parameters": [
+          {
+            "name": "city",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "City name"
+          },
+          {
+            "name": "cuisine",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Cuisine type (e.g., 'Indian', 'Italian')"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of restaurants",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "restaurants": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {"type": "string"},
+                          "name": {"type": "string"},
+                          "cuisine": {"type": "string"},
+                          "rating": {"type": "number"},
+                          "delivery_time": {"type": "string"},
+                          "price_range": {"type": "string"},
+                          "minimum_order": {"type": "number"}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/restaurants/intelligent-search": {
+      "get": {
+        "operationId": "intelligentSearch",
+        "summary": "Intelligent restaurant search",
+        "description": "Search restaurants using natural language query with multiple constraints (dish, price, time, preferences)",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Natural language query (e.g., 'spicy food under $15 in 20 minutes')"
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "San Francisco"
+            },
+            "description": "City name (defaults to San Francisco)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Intelligent search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "parsed_query": {
+                      "type": "object",
+                      "properties": {
+                        "dish": {"type": "string"},
+                        "cuisine": {"type": "string"},
+                        "price_max": {"type": "number"},
+                        "delivery_time_max": {"type": "number"},
+                        "preferences": {"type": "array", "items": {"type": "string"}}
+                      }
+                    },
+                    "restaurants": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {"type": "string"},
+                          "name": {"type": "string"},
+                          "cuisine": {"type": "string"},
+                          "rating": {"type": "number"},
+                          "delivery_time": {"type": "string"},
+                          "price_range": {"type": "string"}
+                        }
+                      }
+                    },
+                    "suggested_items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "restaurant_id": {"type": "string"},
+                          "restaurant_name": {"type": "string"},
+                          "item_name": {"type": "string"},
+                          "price": {"type": "number"},
+                          "tags": {"type": "array", "items": {"type": "string"}}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/restaurants/{restaurant_id}/menu": {
+      "get": {
+        "operationId": "getMenu",
+        "summary": "Get restaurant menu",
+        "description": "Returns full menu for a specific restaurant",
+        "parameters": [
+          {
+            "name": "restaurant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Restaurant ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restaurant menu",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "restaurant": {
+                      "type": "object",
+                      "properties": {
+                        "id": {"type": "string"},
+                        "name": {"type": "string"},
+                        "cuisine": {"type": "string"}
+                      }
+                    },
+                    "menu": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "category": {"type": "string"},
+                          "items": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {"type": "string"},
+                                "name": {"type": "string"},
+                                "price": {"type": "number"},
+                                "description": {"type": "string"},
+                                "tags": {"type": "array", "items": {"type": "string"}}
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/create": {
+      "post": {
+        "operationId": "createOrder",
+        "summary": "Create new order",
+        "description": "Place a new food order",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["restaurant_id", "items", "delivery_address"],
+                "properties": {
+                  "restaurant_id": {
+                    "type": "string",
+                    "description": "Restaurant ID"
+                  },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["item_id", "quantity"],
+                      "properties": {
+                        "item_id": {"type": "string"},
+                        "quantity": {"type": "integer", "minimum": 1}
+                      }
+                    }
+                  },
+                  "delivery_address": {
+                    "type": "object",
+                    "required": ["street", "city", "zipcode"],
+                    "properties": {
+                      "street": {"type": "string"},
+                      "city": {"type": "string"},
+                      "zipcode": {"type": "string"},
+                      "apartment": {"type": "string"}
+                    }
+                  },
+                  "payment_method": {
+                    "type": "string",
+                    "enum": ["credit_card", "debit_card", "cash"],
+                    "default": "credit_card"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "order_id": {"type": "string"},
+                    "status": {"type": "string"},
+                    "total": {"type": "number"},
+                    "estimated_delivery": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/{order_id}/track": {
+      "get": {
+        "operationId": "trackOrder",
+        "summary": "Track order status",
+        "description": "Get current status and details of an order",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Order ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order tracking information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "order_id": {"type": "string"},
+                    "status": {"type": "string"},
+                    "restaurant": {"type": "string"},
+                    "items": {"type": "array"},
+                    "total": {"type": "number"},
+                    "estimated_delivery": {"type": "string"},
+                    "tracking_updates": {"type": "array"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
