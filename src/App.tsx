@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CitySelector } from './components/CitySelector';
 import { CuisineSelector } from './components/CuisineSelector';
 import { RestaurantList } from './components/RestaurantList';
@@ -25,6 +25,20 @@ function App() {
   const [state, setState] = useState<AppState>({ screen: 'city' });
   const [cart, setCart] = useState<OrderItem[]>([]);
   const [showChat, setShowChat] = useState(false);
+  
+  // Embed mode detection
+  const [embedMode, setEmbedMode] = useState(false);
+  
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const isEmbed = params.get('embed') === 'true';
+    setEmbedMode(isEmbed);
+    
+    if (isEmbed) {
+      console.log('🎯 Running in EMBED mode');
+      document.body.classList.add('embed-mode');
+    }
+  }, []);
 
   const handleAddToCart = (item: MenuItem) => {
     const existingItem = cart.find((cartItem) => cartItem.item_id === item.id);
@@ -83,8 +97,21 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
-      {/* Platform Switcher (for testing) */}
-      <PlatformSwitcher />
+      {/* Embed mode - Show only chat interface */}
+      {embedMode ? (
+        <div className="h-screen bg-white">
+          <div className="max-w-4xl mx-auto h-full">
+            <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4 text-center">
+              <h1 className="text-xl font-bold">🍽️ AI Food Ordering</h1>
+              <p className="text-sm opacity-90">Order food with interactive chat!</p>
+            </div>
+            <ChatInterface onSelectRestaurant={handleChatSelectRestaurant} />
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Platform Switcher (for testing) */}
+          <PlatformSwitcher />
 
       {/* Floating Chat Button */}
       {!showChat && state.screen !== 'chat' && (
@@ -215,6 +242,8 @@ function App() {
 
       {state.screen === 'tracking' && (
         <OrderTracking order={state.order} onStartNew={handleStartNew} />
+      )}
+        </>
       )}
     </div>
   );

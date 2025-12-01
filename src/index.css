@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Embed Mode Styling */
+body.embed-mode {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body.embed-mode #root {
+  height: 100vh;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+/* Rest of existing styles... */
+
 @layer base {
   body {
     @apply bg-gray-50 text-gray-900;
