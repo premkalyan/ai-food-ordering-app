@@ -22,23 +22,24 @@ type AppState =
   | { screen: 'chat' };
 
 function App() {
+  // Detect embed mode immediately (not in useEffect)
+  const isEmbedMode = typeof window !== 'undefined' && 
+    new URLSearchParams(window.location.search).get('embed') === 'true';
+  
   const [state, setState] = useState<AppState>({ screen: 'city' });
   const [cart, setCart] = useState<OrderItem[]>([]);
   const [showChat, setShowChat] = useState(false);
   
-  // Embed mode detection
-  const [embedMode, setEmbedMode] = useState(false);
-  
+  // Add embed class to body on mount
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const isEmbed = params.get('embed') === 'true';
-    setEmbedMode(isEmbed);
-    
-    if (isEmbed) {
+    if (isEmbedMode) {
       console.log('🎯 Running in EMBED mode');
       document.body.classList.add('embed-mode');
+      return () => {
+        document.body.classList.remove('embed-mode');
+      };
     }
-  }, []);
+  }, [isEmbedMode]);
 
   const handleAddToCart = (item: MenuItem) => {
     const existingItem = cart.find((cartItem) => cartItem.item_id === item.id);
@@ -98,7 +99,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
       {/* Embed mode - Show only chat interface */}
-      {embedMode ? (
+      {isEmbedMode ? (
         <div className="embed-container h-screen bg-white flex flex-col">
           <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-3 text-center flex-shrink-0">
             <h1 className="text-lg font-bold">🍽️ AI Food Ordering</h1>
