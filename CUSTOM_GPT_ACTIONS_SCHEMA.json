@@ -133,7 +133,7 @@
         }
       }
     },
-    "/restaurants/intelligent-search": {
+    "/search/intelligent": {
       "get": {
         "operationId": "intelligentSearch",
         "summary": "Intelligent restaurant search",
