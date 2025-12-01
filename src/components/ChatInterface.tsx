@@ -46,6 +46,12 @@ export function ChatInterface({ embedMode = false }: ChatInterfaceProps) {
         ? "👋 Hi! I'm your AI food ordering assistant.\n\nTry quick prompts below or type what you're craving!"
         : "👋 Hi! I'm your AI food ordering assistant. You can ask me things like:\n\n• \"I want Chicken Tikka Masala in New York\"\n• \"Find Italian food under $20\"\n• \"I'm hungry, get me something spicy in 30 minutes\"\n\nWhat are you craving today?",
       timestamp: new Date(),
+      buttons: embedMode ? [
+        { label: 'Chicken Tikka Masala in New York', action: 'quick_search', data: 'Chicken Tikka Masala in New York', variant: 'primary' as const },
+        { label: 'Italian food under $20', action: 'quick_search', data: 'Italian food under $20', variant: 'primary' as const },
+        { label: 'Sushi in Los Angeles', action: 'quick_search', data: 'Sushi in Los Angeles', variant: 'primary' as const },
+        { label: 'Spicy food in 30 minutes', action: 'quick_search', data: 'Spicy food in 30 minutes', variant: 'primary' as const },
+      ] : undefined,
     },
   ]);
   const [input, setInput] = useState('');
