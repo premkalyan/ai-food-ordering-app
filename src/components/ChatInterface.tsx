@@ -21,6 +21,7 @@ interface MessageButton {
 
 interface ChatInterfaceProps {
   onSelectRestaurant?: (restaurant: Restaurant) => void;
+  embedMode?: boolean;
 }
 
 interface ChatState {
@@ -36,12 +37,14 @@ interface Favorites {
   dishes: MenuItem[]; // Full menu item objects
 }
 
-export function ChatInterface({}: ChatInterfaceProps) {
+export function ChatInterface({ embedMode = false }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       role: 'assistant',
-      content: "👋 Hi! I'm your AI food ordering assistant. You can ask me things like:\n\n• \"I want Chicken Tikka Masala in New York\"\n• \"Find Italian food under $20\"\n• \"I'm hungry, get me something spicy in 30 minutes\"\n\nWhat are you craving today?",
+      content: embedMode 
+        ? "👋 Hi! I'm your AI food ordering assistant.\n\nTry quick prompts below or type what you're craving!"
+        : "👋 Hi! I'm your AI food ordering assistant. You can ask me things like:\n\n• \"I want Chicken Tikka Masala in New York\"\n• \"Find Italian food under $20\"\n• \"I'm hungry, get me something spicy in 30 minutes\"\n\nWhat are you craving today?",
       timestamp: new Date(),
     },
   ]);
@@ -860,8 +863,8 @@ export function ChatInterface({}: ChatInterfaceProps) {
 
   return (
     <div className="flex flex-col h-full bg-white">
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* Messages - Fixed height with scroll */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ minHeight: 0 }}>
         {messages.map((message) => (
           <div
             key={message.id}
@@ -1045,7 +1048,7 @@ export function ChatInterface({}: ChatInterfaceProps) {
       )}
 
       {/* Quick Actions Bar - Always visible */}
-      <div className="px-4 py-3 border-t border-gray-200 bg-gray-50">
+      <div className="px-4 py-3 border-t border-gray-200 bg-gray-50 flex-shrink-0">
         <p className="text-xs text-gray-600 mb-2 font-medium">Quick Actions:</p>
         <div className="flex flex-wrap gap-2">
           {/* Always show cart actions */}
@@ -1113,7 +1116,7 @@ export function ChatInterface({}: ChatInterfaceProps) {
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-gray-200 flex-shrink-0">
         <div className="flex space-x-2">
           <input
             type="text"

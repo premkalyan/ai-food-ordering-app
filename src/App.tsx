@@ -105,7 +105,10 @@ function App() {
             <p className="text-xs opacity-90">Order food with interactive chat!</p>
           </div>
           <div className="flex-1 overflow-hidden">
-            <ChatInterface onSelectRestaurant={handleChatSelectRestaurant} />
+            <ChatInterface 
+              onSelectRestaurant={handleChatSelectRestaurant}
+              embedMode={true}
+            />
           </div>
         </div>
       ) : (
