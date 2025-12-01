@@ -860,13 +860,6 @@ export function ChatInterface({ embedMode = false }: ChatInterfaceProps) {
     }
   };
 
-  const quickPrompts = [
-    "Chicken Tikka Masala in New York",
-    "Italian food under $20",
-    "Sushi in Los Angeles",
-    "Spicy food in 30 minutes",
-  ];
-
   return (
     <div className="flex flex-col h-full bg-white">
       {/* Messages - Fixed height with scroll */}
@@ -969,89 +962,6 @@ export function ChatInterface({ embedMode = false }: ChatInterfaceProps) {
 
         <div ref={messagesEndRef} />
       </div>
-
-      {/* Quick Prompts */}
-      {(messages.length === 1 || (messages.length > 1 && messages[messages.length - 1].content.includes("Let's start fresh"))) && (
-        <div className="px-4 py-2 border-t border-gray-200">
-          <p className="text-xs text-gray-600 mb-2">Try these:</p>
-          <div className="flex flex-wrap gap-2">
-            {quickPrompts.map((prompt, index) => (
-              <button
-                key={index}
-                onClick={async () => {
-                  if (loading) return;
-                  
-                  // Add user message
-                  addMessage('user', prompt);
-                  setLoading(true);
-
-                  try {
-                    // Call intelligent search API
-                    const result = await api.intelligentSearch(prompt);
-
-                    if (result.restaurants && result.restaurants.length > 0) {
-                      let responseContent = `I found ${result.restaurants.length} restaurant${result.restaurants.length > 1 ? 's' : ''} matching your request:\n\n`;
-                      
-                      result.restaurants.slice(0, 5).forEach((restaurant, index) => {
-                        responseContent += `**${index + 1}. ${restaurant.name}** (${restaurant.cuisine})\n`;
-                        responseContent += `   ⭐ ${restaurant.rating} stars | 🕒 ${restaurant.delivery_time} | 💰 ${restaurant.price_range}\n`;
-                        responseContent += `   📍 ${restaurant.location.city}\n\n`;
-                      });
-
-                      responseContent += `\nClick a button below to view the menu:`;
-
-                      // Create buttons for each restaurant
-                      const restaurantButtons: MessageButton[] = [];
-                      
-                      result.restaurants.slice(0, 5).forEach((restaurant, index) => {
-                        const isFav = favorites.restaurants.some(r => r.id === restaurant.id);
-                        
-                        // Main restaurant button
-                        restaurantButtons.push({
-                          label: `${index + 1}. ${restaurant.name}`,
-                          action: 'select_restaurant',
-                          data: restaurant,
-                          variant: 'primary' as const,
-                        });
-                        
-                        // Favorite toggle button
-                        restaurantButtons.push({
-                          label: isFav ? '⭐ Favorited' : '☆ Add to Favorites',
-                          action: 'toggle_favorite_restaurant',
-                          data: restaurant,
-                          variant: 'secondary' as const,
-                        });
-                      });
-
-                      setChatState({
-                        stage: 'search',
-                        cart: [],
-                        lastSearchResults: result.restaurants,
-                      });
-
-                      addMessage('assistant', responseContent, { 
-                        restaurants: result.restaurants,
-                        buttons: restaurantButtons,
-                      });
-                    } else {
-                      addMessage('assistant', `I couldn't find restaurants matching your criteria. Try:\n\n• Adjusting your budget\n• Different cuisine\n• Longer delivery time\n\nWhat else can I help you find?`);
-                    }
-                  } catch (error) {
-                    console.error('Search failed:', error);
-                    addMessage('assistant', "Sorry, I encountered an error. Please try again.");
-                  } finally {
-                    setLoading(false);
-                  }
-                }}
-                disabled={loading}
-                className="text-xs px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium rounded-full transition-colors disabled:opacity-50"
-              >
-                {prompt}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Quick Actions Bar - Compact, always visible */}
       <div className="px-3 py-2 border-t border-gray-200 bg-gray-50 flex-shrink-0">
