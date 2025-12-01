@@ -1053,18 +1053,17 @@ export function ChatInterface({ embedMode = false }: ChatInterfaceProps) {
         </div>
       )}
 
-      {/* Quick Actions Bar - Always visible */}
-      <div className="px-4 py-3 border-t border-gray-200 bg-gray-50 flex-shrink-0">
-        <p className="text-xs text-gray-600 mb-2 font-medium">Quick Actions:</p>
-        <div className="flex flex-wrap gap-2">
-          {/* Always show cart actions */}
+      {/* Quick Actions Bar - Compact, always visible */}
+      <div className="px-3 py-2 border-t border-gray-200 bg-gray-50 flex-shrink-0">
+        <div className="flex flex-wrap gap-1.5 items-center">
+          {/* Always show cart actions - compact */}
           <button
             onClick={() => handleButtonClick('show_cart')}
             disabled={loading}
-            className="px-3 py-1.5 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
+            className="px-2 py-1 bg-green-100 hover:bg-green-200 text-green-700 rounded text-xs font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
           >
             <span>🛒</span>
-            <span>View Cart ({chatState.cart.length})</span>
+            <span>Cart ({chatState.cart.length})</span>
           </button>
           
           {chatState.cart.length > 0 && (
@@ -1072,7 +1071,7 @@ export function ChatInterface({ embedMode = false }: ChatInterfaceProps) {
               <button
                 onClick={() => handleButtonClick('checkout')}
                 disabled={loading}
-                className="px-3 py-1.5 bg-orange-100 hover:bg-orange-200 text-orange-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
+                className="px-2 py-1 bg-orange-100 hover:bg-orange-200 text-orange-700 rounded text-xs font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
               >
                 <span>✅</span>
                 <span>Checkout</span>
@@ -1080,10 +1079,10 @@ export function ChatInterface({ embedMode = false }: ChatInterfaceProps) {
               <button
                 onClick={() => handleButtonClick('clear_cart')}
                 disabled={loading}
-                className="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
+                className="px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded text-xs font-medium transition-colors disabled:opacity-50"
+                title="Clear Cart"
               >
                 <span>🗑️</span>
-                <span>Clear Cart</span>
               </button>
             </>
           )}
@@ -1092,37 +1091,37 @@ export function ChatInterface({ embedMode = false }: ChatInterfaceProps) {
             <button
               onClick={() => handleButtonClick('track_order')}
               disabled={loading}
-              className="px-3 py-1.5 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
+              className="px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded text-xs font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
             >
               <span>📦</span>
-              <span>Track Order</span>
+              <span>Track</span>
             </button>
           )}
           
           <button
             onClick={() => handleButtonClick('show_favorites')}
             disabled={loading}
-            className="px-3 py-1.5 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
+            className="px-2 py-1 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded text-xs font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
           >
             <span>⭐</span>
-            <span>My Favorites ({favorites.restaurants.length + favorites.dishes.length})</span>
+            <span>Fav ({favorites.restaurants.length + favorites.dishes.length})</span>
           </button>
           
           {chatState.stage !== 'search' && (
             <button
               onClick={() => handleButtonClick('start_over')}
               disabled={loading}
-              className="px-3 py-1.5 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center space-x-1"
+              className="px-2 py-1 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded text-xs font-medium transition-colors disabled:opacity-50"
+              title="Start Over"
             >
               <span>🆕</span>
-              <span>Start Over</span>
             </button>
           )}
         </div>
       </div>
 
-      {/* Input */}
-      <div className="p-4 border-t border-gray-200 flex-shrink-0">
+      {/* Input - Compact, at bottom */}
+      <div className="px-3 py-2 border-t border-gray-200 bg-white flex-shrink-0">
         <div className="flex space-x-2">
           <input
             type="text"
@@ -1130,20 +1129,17 @@ export function ChatInterface({ embedMode = false }: ChatInterfaceProps) {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Type your message..."
-            className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             disabled={loading}
           />
           <button
             onClick={handleSend}
             disabled={loading || !input.trim()}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors text-sm"
           >
             {loading ? '⏳' : '📤'}
           </button>
         </div>
-        <p className="text-xs text-gray-500 mt-2">
-          Press Enter to send • Shift+Enter for new line
-        </p>
       </div>
     </div>
   );

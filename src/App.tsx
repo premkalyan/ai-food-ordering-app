@@ -101,9 +101,8 @@ function App() {
       {/* Embed mode - Show only chat interface */}
       {isEmbedMode ? (
         <div className="fixed inset-0 bg-white flex flex-col" style={{ height: '100vh', maxHeight: '600px' }}>
-          <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-3 text-center flex-shrink-0">
-            <h1 className="text-lg font-bold">🍽️ AI Food Ordering</h1>
-            <p className="text-xs opacity-90">Order food with interactive chat!</p>
+          <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 py-2 text-center flex-shrink-0">
+            <h1 className="text-base font-bold">🍽️ AI Food Ordering</h1>
           </div>
           <div className="flex-1 flex flex-col overflow-hidden">
             <ChatInterface 
